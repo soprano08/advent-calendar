@@ -1,0 +1,61 @@
+<!--
+Plik: index.html
+Opis: Podstawowa, pusta strona z naglowkiem "Kalendarz dla Sylwii".
+Instrukcja: Zapisz ten plik jako index.html, spakuj do ZIP i wrzuć do repozytorium GitHub (root). Po włączeniu GitHub Pages strona będzie dostępna.
+-->
+
+
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kalendarz dla Sylwii</title>
+<style>
+/* Prosty, czytelny styl startowy */
+:root{--bg:#f7f7fb;--accent:#2b6cb0;--muted:#6b7280}
+html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:#111}
+.page{min-height:100%;display:flex;flex-direction:column}
+header{background:linear-gradient(90deg, rgba(43,108,176,0.95), rgba(59,130,246,0.9));color:white;padding:28px 20px;box-shadow:0 4px 14px rgba(11,46,80,0.12)}
+.container{max-width:960px;margin:28px auto;padding:0 16px;width:100%}
+h1{font-size:28px;margin:0;font-weight:600;letter-spacing:0.2px}
+
+
+/* Miejsce na zawartość kalendarza - obecnie puste */
+main{flex:1;display:flex;align-items:center;justify-content:center}
+.placeholder{width:100%;max-width:860px;height:420px;border:2px dashed rgba(0,0,0,0.06);background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:20px;box-shadow:0 6px 18px rgba(20,40,80,0.04)}
+.placeholder p{margin:0;color:var(--muted)}
+
+
+footer{padding:18px 20px;text-align:center;color:var(--muted);font-size:14px}
+
+
+@media (max-width:520px){h1{font-size:20px}.placeholder{height:320px}}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+<div class="container">
+<h1>Kalendarz dla Sylwii</h1>
+</div>
+</header>
+
+
+<main>
+<div class="container">
+<div class="placeholder">
+<strong>Tu będzie Twój kalendarz</strong>
+<p>Strona jest aktualnie pusta — wkleję tutaj za chwilę 24 okienka i logikę otwierania.</p>
+<p style="font-size:12px;color:var(--muted)">Plik: index.html — zapisz i wrzuć do repozytorium na GitHubie</p>
+</div>
+</div>
+</main>
+
+
+<footer>
+Gotowe do wrzucenia na GitHub Pages • Jeśli chcesz, przygotuję teraz pełny kalendarz z 24 okienkami i miejscem na Twoje napisy.
+</footer>
+</div>
+</body>
+</html>
