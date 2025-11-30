@@ -5,60 +5,153 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kalendarz dla Sylwii</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<style>
+body {
+  margin:0;
+  font-family:'Playfair Display', serif;
+  background: linear-gradient(#e8f4ff,#ffffff);
+}
+header {
+  text-align:center;
+  padding:30px 0;
+  font-size:32px;
+  font-weight:700;
+  background: linear-gradient(90deg, rgba(43,108,176,0.95), rgba(59,130,246,0.9));
+  color:white;
+  box-shadow:0 4px 14px rgba(11,46,80,0.12);
+}
+.container{
+  max-width:960px;
+  margin:20px auto;
+  padding:0 16px;
+}
+.calendar-grid{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:10px;
+}
+.door{
+  position:relative;
+  width:100%;
+  padding-top:100%;
+  perspective:600px;
+  cursor:pointer;
+}
+.door-inner{
+  position:absolute;
+  top:0; left:0; right:0; bottom:0;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+.door.opened .door-inner{
+  transform: rotateY(180deg);
+}
+.door-front, .door-back{
+  position:absolute;
+  width:100%;
+  height:100%;
+  backface-visibility:hidden;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  font-weight:700;
+  box-shadow:0 4px 8px rgba(0,0,0,0.2);
+}
+.door-front{
+  background:#2b6cb0;
+  color:white;
+}
+.door-back{
+  background:#d1e7ff;
+  color:#1e3a8a;
+  transform: rotateY(180deg);
+}
+.popup{
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.45);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.popup-box{
+  background:white;
+  padding:30px;
+  border-radius:14px;
+  text-align:center;
+  max-width:400px;
+  width:90%;
+}
+.popup button{
+  margin-top:15px;
+  padding:8px 16px;
+  border:none;
+  background:#3b82f6;
+  color:white;
+  border-radius:10px;
+  cursor:pointer;
+}
+.popup button:hover{background:#1e63d6;}
+</style>
 </head>
 <body>
 <header>Kalendarz dla Sylwii</header>
 <div class="container">
   <div class="calendar-grid">
-    <!-- 24 okienka ręcznie -->
-    <div class="door" data-day="1">1</div>
-    <div class="door" data-day="2">2</div>
-    <div class="door" data-day="3">3</div>
-    <div class="door" data-day="4">4</div>
-    <div class="door" data-day="5">5</div>
-    <div class="door" data-day="6">6</div>
-    <div class="door" data-day="7">7</div>
-    <div class="door" data-day="8">8</div>
-    <div class="door" data-day="9">9</div>
-    <div class="door" data-day="10">10</div>
-    <div class="door" data-day="11">11</div>
-    <div class="door" data-day="12">12</div>
-    <div class="door" data-day="13">13</div>
-    <div class="door" data-day="14">14</div>
-    <div class="door" data-day="15">15</div>
-    <div class="door" data-day="16">16</div>
-    <div class="door" data-day="17">17</div>
-    <div class="door" data-day="18">18</div>
-    <div class="door" data-day="19">19</div>
-    <div class="door" data-day="20">20</div>
-    <div class="door" data-day="21">21</div>
-    <div class="door" data-day="22">22</div>
-    <div class="door" data-day="23">23</div>
-    <div class="door" data-day="24">24</div>
+    <!-- 24 okienka z emoji -->
+    <div class="door" data-day="1"><div class="door-inner"><div class="door-front">🎁</div><div class="door-back">Dzień 1: Wesołego grudnia! ❄️</div></div></div>
+    <div class="door" data-day="2"><div class="door-inner"><div class="door-front">🎄</div><div class="door-back">Dzień 2: Miłego dnia 💙</div></div></div>
+    <div class="door" data-day="3"><div class="door-inner"><div class="door-front">🍫</div><div class="door-back">Dzień 3: Jesteś super!</div></div></div>
+    <div class="door" data-day="4"><div class="door-inner"><div class="door-front">❄️</div><div class="door-back">Dzień 4: Ciepła herbata i kocyk ☕</div></div></div>
+    <div class="door" data-day="5"><div class="door-inner"><div class="door-front">🧸</div><div class="door-back">Dzień 5: Uśmiech proszę 😄</div></div></div>
+    <div class="door" data-day="6"><div class="door-inner"><div class="door-front">🕯️</div><div class="door-back">Dzień 6: Jesteś ważna!</div></div></div>
+    <div class="door" data-day="7"><div class="door-inner"><div class="door-front">⛄</div><div class="door-back">Dzień 7: Zimowa magia dla Sylwii ✨</div></div></div>
+    <div class="door" data-day="8"><div class="door-inner"><div class="door-front">⭐</div><div class="door-back">Dzień 8: Dziś będzie pięknie!</div></div></div>
+    <div class="door" data-day="9"><div class="door-inner"><div class="door-front">🍪</div><div class="door-back">Dzień 9: Buziak 💋</div></div></div>
+    <div class="door" data-day="10"><div class="door-inner"><div class="door-front">🧦</div><div class="door-back">Dzień 10: Jesteś wyjątkowa</div></div></div>
+    <div class="door" data-day="11"><div class="door-inner"><div class="door-front">🛷</div><div class="door-back">Dzień 11: Czas na relaks~</div></div></div>
+    <div class="door" data-day="12"><div class="door-inner"><div class="door-front">🦌</div><div class="door-back">Dzień 12: Dobra energia dla Ciebie</div></div></div>
+    <div class="door" data-day="13"><div class="door-inner"><div class="door-front">🎶</div><div class="door-back">Dzień 13: Małe szczęścia są najważniejsze</div></div></div>
+    <div class="door" data-day="14"><div class="door-inner"><div class="door-front">🎀</div><div class="door-back">Dzień 14: Dziś będzie lekko ❄️</div></div></div>
+    <div class="door" data-day="15"><div class="door-inner"><div class="door-front">🕹️</div><div class="door-back">Dzień 15: You got this!</div></div></div>
+    <div class="door" data-day="16"><div class="door-inner"><div class="door-front">🍬</div><div class="door-back">Dzień 16: Grudniowy vibe 🎶</div></div></div>
+    <div class="door" data-day="17"><div class="door-inner"><div class="door-front">🎠</div><div class="door-back">Dzień 17: Dla najfajniejszej Sylwii</div></div></div>
+    <div class="door" data-day="18"><div class="door-inner"><div class="door-front">🕯️</div><div class="door-back">Dzień 18: Jesteś kochana</div></div></div>
+    <div class="door" data-day="19"><div class="door-inner"><div class="door-front">🎉</div><div class="door-back">Dzień 19: Ciepłe myśli ✨</div></div></div>
+    <div class="door" data-day="20"><div class="door-inner"><div class="door-front">🎅</div><div class="door-back">Dzień 20: Zrób coś miłego dla siebie</div></div></div>
+    <div class="door" data-day="21"><div class="door-inner"><div class="door-front">🛍️</div><div class="door-back">Dzień 21: Uśmiech działa cuda</div></div></div>
+    <div class="door" data-day="22"><div class="door-inner"><div class="door-front">🕎</div><div class="door-back">Dzień 22: Dobre rzeczy nadchodzą</div></div></div>
+    <div class="door" data-day="23"><div class="door-inner"><div class="door-front">❄️</div><div class="door-back">Dzień 23: Prawie święta! 🎄</div></div></div>
+    <div class="door" data-day="24"><div class="door-inner"><div class="door-front">🎁</div><div class="door-back">Dzień 24: Wesołych Świąt Sylwia! 🎁</div></div></div>
   </div>
-
-  <div class="calendar-grid">
-  <!-- przykład jednego okienka -->
-  <div class="door" data-day="1">
-      <div class="door-inner">
-          <div class="door-front">1</div>
-          <div class="door-back">🎄</div>
-      </div>
-  </div>
-  <div class="door" data-day="2">
-      <div class="door-inner">
-          <div class="door-front">2</div>
-          <div class="door-back">🍫</div>
-      </div>
-  </div>
-  <!-- powtórz do 24 dni z różnymi ikonami lub obrazkami -->
 </div>
 
-</div>
-
-<!-- skrypt zewnętrzny -->
-<script src="script.js"></script>
+<script>
+const today = new Date().getMonth() === 11 ? new Date().getDate() : 1;
+document.querySelectorAll('.door').forEach(door=>{
+  door.addEventListener('click', ()=>{
+    const day = parseInt(door.dataset.day);
+    if(day <= today){
+      door.classList.add('opened');
+      const popup = document.createElement('div');
+      popup.className='popup';
+      popup.innerHTML=`<div class="popup-box"><h2>Dzień ${day}</h2><p>${door.querySelector('.door-back').textContent}</p><button>Zamknij</button></div>`;
+      document.body.appendChild(popup);
+      popup.querySelector('button').onclick = ()=> popup.remove();
+    } else {
+      const popup = document.createElement('div');
+      popup.className='popup';
+      popup.innerHTML=`<div class="popup-box"><h2>Uuuu!</h2><p>Nie oszukuj! 🔒</p><button>Zamknij</button></div>`;
+      document.body.appendChild(popup);
+      popup.querySelector('button').onclick = ()=> popup.remove();
+    }
+  });
+});
+</script>
 </body>
 </html>
+
 
