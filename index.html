@@ -31,31 +31,80 @@ footer{padding:18px 20px;text-align:center;color:var(--muted);font-size:14px}
 
 
 @media (max-width:520px){h1{font-size:20px}.placeholder{height:320px}}
-</style>
-</head>
-<body>
-<div class="page">
-<header>
-<div class="container">
-<h1>Kalendarz dla Sylwii</h1>
-</div>
-</header>
+/* --- ZIMOWY STYL (wersja B) --- */
+body{background:linear-gradient(#e8f4ff,#ffffff);}
 
 
-<main>
-<div class="container">
-<div class="placeholder">
-<strong>Tu będzie Twój kalendarz</strong>
-<p>Strona jest aktualnie pusta — wkleję tutaj za chwilę 24 okienka i logikę otwierania.</p>
-<p style="font-size:12px;color:var(--muted)">Plik: index.html — zapisz i wrzuć do repozytorium na GitHubie</p>
-</div>
-</div>
-</main>
+.calendar-grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+gap:18px;
+padding:20px 0;
+}
 
 
-<footer>
-Gotowe do wrzucenia na GitHub Pages • Jeśli chcesz, przygotuję teraz pełny kalendarz z 24 okienkami i miejscem na Twoje napisy.
-</footer>
-</div>
-</body>
+.door{
+background:rgba(255,255,255,0.9);
+backdrop-filter:blur(6px);
+border-radius:14px;
+padding:28px 0;
+text-align:center;
+font-size:26px;
+font-weight:600;
+color:#2b6cb0;
+cursor:pointer;
+box-shadow:0 6px 14px rgba(0,40,80,0.08);
+transition:transform .25s, box-shadow .25s;
+position:relative;
+}
+
+
+.door:hover{
+transform:translateY(-4px);
+box-shadow:0 10px 18px rgba(0,40,80,0.12);
+}
+
+
+/* Efekt otwarcia */
+.door.opened{
+background:#d1e7ff;
+color:#1e3a8a;
+}
+
+
+/* Okno z tekstem */
+.popup{
+position:fixed;
+top:0;left:0;width:100%;height:100%;
+background:rgba(0,0,0,0.45);
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+z-index:50;
+backdrop-filter:blur(4px);
+}
+
+
+.popup-box{
+background:white;
+padding:32px;
+border-radius:16px;
+max-width:420px;
+width:100%;
+text-align:center;
+box-shadow:0 10px 26px rgba(0,0,0,0.15);
+animation:fadeIn .35s ease;
+}
+
+
+@keyframes fadeIn{
+from{opacity:0;transform:scale(.92)}
+to{opacity:1;transform:scale(1)}
+}
+
+
+.popup button{
+margin-top:20px;
+padding:10px 18px;
 </html>
