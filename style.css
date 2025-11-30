@@ -3,6 +3,7 @@ body {
     font-family: 'Playfair Display', serif;
     background: linear-gradient(#e8f4ff, #ffffff);
 }
+
 header {
     text-align: center;
     padding: 30px 0;
@@ -12,32 +13,61 @@ header {
     color: white;
     box-shadow: 0 4px 14px rgba(11,46,80,0.12);
 }
+
 .container {
     max-width: 960px;
     margin: 20px auto;
     padding: 0 16px;
 }
+
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px,1fr));
     gap: 15px;
 }
+
 .door {
-    background: rgba(255,255,255,0.9);
-    padding: 25px 0;
+    position: relative;
+    width: 100%;
+    padding-top: 100%; /* kwadrat */
+    perspective: 800px;
+    cursor: pointer;
+}
+
+.door-inner {
+    position: absolute;
+    top: 0; left: 0; right:0; bottom:0;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.door.opened .door-inner {
+    transform: rotateY(180deg);
+}
+
+.door-front, .door-back {
+    position: absolute;
+    width: 100%; height: 100%;
+    backface-visibility: hidden;
     border-radius: 12px;
-    text-align: center;
+    box-shadow: 0 6px 14px rgba(0,40,80,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 24px;
     font-weight: 700;
-    color: #2b6cb0;
-    cursor: pointer;
-    box-shadow: 0 6px 14px rgba(0,40,80,0.08);
-    transition: 0.3s;
-    transform-style: preserve-3d;
-    perspective: 600px;
+    color: #fff;
 }
-.door:hover { transform: translateY(-3px);}
-.door.opened { background: #d1e7ff; color: #1e3a8a; }
+
+.door-front {
+    background: #2b6cb0 url('https://cdn.pixabay.com/photo/2016/12/19/19/44/snow-1910627_1280.png') center/cover no-repeat;
+}
+
+.door-back {
+    background: #d1e7ff;
+    color: #1e3a8a;
+    transform: rotateY(180deg);
+}
 
 .popup {
     position: fixed;
@@ -48,6 +78,7 @@ header {
     justify-content:center;
     align-items:center;
 }
+
 .popup-box {
     background:white;
     padding:30px;
@@ -56,6 +87,7 @@ header {
     max-width:400px;
     width:90%;
 }
+
 .popup button {
     margin-top:15px;
     padding:8px 16px;
@@ -66,3 +98,4 @@ header {
     cursor:pointer;
 }
 .popup button:hover { background:#1e63d6; }
+
