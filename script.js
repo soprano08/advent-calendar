@@ -1,4 +1,3 @@
-// wiadomości
 const messages = {
 1:"Wesołego grudnia! ❄️",2:"Miłego dnia 💙",3:"Jesteś super!",
 4:"Ciepła herbata i kocyk ☕",5:"Uśmiech proszę 😄",6:"Jesteś ważna!",
@@ -10,26 +9,23 @@ const messages = {
 22:"Dobre rzeczy nadchodzą",23:"Prawie święta! 🎄",24:"Wesołych Świąt Sylwia! 🎁"
 };
 
-// dzisiejszy dzień grudnia
 const today = new Date().getMonth() === 11 ? new Date().getDate() : 1;
 
 document.querySelectorAll('.door').forEach(door=>{
     door.addEventListener('click', ()=>{
         const day = parseInt(door.dataset.day);
         if(day <= today){
-            // efekt przewracania drzwi
-            door.style.transform = "rotateY(180deg)";
             door.classList.add('opened');
 
             const popup = document.createElement('div');
-            popup.className = 'popup';
-            popup.innerHTML = `<div class="popup-box"><h2>Dzień ${day}</h2><p>${messages[day]}</p><button>Zamknij</button></div>`;
+            popup.className='popup';
+            popup.innerHTML=`<div class="popup-box"><h2>Dzień ${day}</h2><p>${messages[day]}</p><button>Zamknij</button></div>`;
             document.body.appendChild(popup);
             popup.querySelector('button').onclick = ()=> popup.remove();
         } else {
             const popup = document.createElement('div');
-            popup.className = 'popup';
-            popup.innerHTML = `<div class="popup-box"><h2>Uuuu!</h2><p>Nie oszukuj! 🔒</p><button>Zamknij</button></div>`;
+            popup.className='popup';
+            popup.innerHTML=`<div class="popup-box"><h2>Uuuu!</h2><p>Nie oszukuj! 🔒</p><button>Zamknij</button></div>`;
             document.body.appendChild(popup);
             popup.querySelector('button').onclick = ()=> popup.remove();
         }
