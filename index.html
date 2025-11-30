@@ -6,49 +6,52 @@
 <title>Kalendarz dla Sylwii</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  body {
+body {
     margin:0;
     font-family:'Playfair Display', serif;
-    background: linear-gradient(#e8f4ff,#ffffff);
-  }
-  header {
+    background: url('images/background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    overflow-x: hidden;
+    position: relative;
+}
+header {
     text-align:center;
     padding:30px 0;
     font-size:32px;
     font-weight:700;
-    background: linear-gradient(90deg, rgba(43,108,176,0.95), rgba(59,130,246,0.9));
     color:white;
-    box-shadow:0 4px 14px rgba(11,46,80,0.12);
-  }
-  .container{
+    text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+}
+.container{
     max-width:960px;
     margin:20px auto;
     padding:0 16px;
-  }
-  .calendar-grid{
+}
+.calendar-grid{
     display:grid;
     grid-template-columns:repeat(6,1fr);
     gap:10px;
-  }
-  .door{
+    perspective:1000px;
+}
+.door{
     position:relative;
     width:100%;
-    padding-top:100%; /* kwadrat */
-    perspective:600px;
+    padding-top:100%;
     cursor:pointer;
-  }
-  .door-inner{
+}
+.door-inner{
     position:absolute;
     top:0; left:0; right:0; bottom:0;
-    transition: transform 0.6s;
     transform-style: preserve-3d;
-  }
-  .door.opened .door-inner{
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.door.opened .door-inner{
     transform: rotateY(180deg);
-  }
-  .door-front, .door-back{
+}
+.door-front, .door-back{
     position:absolute;
-    width:100%; height:100%;
+    width:100%;
+    height:100%;
     backface-visibility:hidden;
     border-radius:12px;
     display:flex;
@@ -56,24 +59,29 @@
     justify-content:center;
     font-size:24px;
     font-weight:700;
-    box-shadow:0 4px 8px rgba(0,0,0,0.2);
+    box-shadow:0 4px 12px rgba(0,0,0,0.3);
     overflow:hidden;
-  }
-  .door-front img {
+}
+.door-front img {
     width:100%;
     height:100%;
     object-fit: cover;
     border-radius:12px;
-  }
-  .door-back{
-    background:#d1e7ff;
+    transform: scale(1);
+    transition: transform 0.3s;
+}
+.door:hover .door-front img {
+    transform: scale(1.05);
+}
+.door-back{
+    background: rgba(255,255,255,0.9);
     color:#1e3a8a;
     transform: rotateY(180deg);
     padding:10px;
     box-sizing: border-box;
     text-align:center;
-  }
-  .popup{
+}
+.popup{
     position:fixed;
     top:0; left:0;
     width:100%; height:100%;
@@ -81,16 +89,18 @@
     display:flex;
     justify-content:center;
     align-items:center;
-  }
-  .popup-box{
+    z-index:1000;
+}
+.popup-box{
     background:white;
     padding:30px;
     border-radius:14px;
     text-align:center;
     max-width:400px;
     width:90%;
-  }
-  .popup button{
+    animation: popupFade 0.3s ease-out;
+}
+.popup button{
     margin-top:15px;
     padding:8px 16px;
     border:none;
@@ -98,63 +108,86 @@
     color:white;
     border-radius:10px;
     cursor:pointer;
-  }
-  .popup button:hover{background:#1e63d6;}
+}
+.popup button:hover{background:#1e63d6;}
+@keyframes popupFade{
+    from {opacity:0; transform: scale(0.8);}
+    to {opacity:1; transform: scale(1);}
+}
+/* Śnieg */
+.snowflake {
+    position: fixed;
+    top: -10px;
+    z-index: 9999;
+    user-select: none;
+    pointer-events: none;
+    color: white;
+    font-size: 1em;
+    animation-name: fall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+@keyframes fall {
+    0% { transform: translateY(0) translateX(0); opacity:1; }
+    100% { transform: translateY(100vh) translateX(50px); opacity:0; }
+}
 </style>
 </head>
 <body>
 <header>Kalendarz dla Sylwii</header>
 <div class="container">
-  <div class="calendar-grid">
-    <!-- 24 okienka z lokalnymi zdjęciami -->
-    <!-- Podmień treści dni wg swojego uznania -->
-    <script>
-      const messages = [
-        "Dzień 1: Wesołego grudnia! ❄️",
-        "Dzień 2: Miłego dnia 💙",
-        "Dzień 3: Jesteś super!",
-        "Dzień 4: Ciepła herbata i kocyk ☕",
-        "Dzień 5: Uśmiech proszę 😄",
-        "Dzień 6: Jesteś ważna!",
-        "Dzień 7: Zimowa magia dla Sylwii ✨",
-        "Dzień 8: Dziś będzie pięknie!",
-        "Dzień 9: Buziak 💋",
-        "Dzień 10: Jesteś wyjątkowa",
-        "Dzień 11: Czas na relaks~",
-        "Dzień 12: Dobra energia dla Ciebie",
-        "Dzień 13: Małe szczęścia są najważniejsze",
-        "Dzień 14: Dziś będzie lekko ❄️",
-        "Dzień 15: You got this!",
-        "Dzień 16: Grudniowy vibe 🎶",
-        "Dzień 17: Dla najfajniejszej Sylwii",
-        "Dzień 18: Jesteś kochana",
-        "Dzień 19: Ciepłe myśli ✨",
-        "Dzień 20: Zrób coś miłego dla siebie",
-        "Dzień 21: Uśmiech działa cuda",
-        "Dzień 22: Dobre rzeczy nadchodzą",
-        "Dzień 23: Prawie święta! 🎄",
-        "Dzień 24: Wesołych Świąt Sylwia! 🎁"
-      ];
+  <div class="calendar-grid"></div>
+</div>
 
-      const today = (new Date().getMonth() === 11) ? new Date().getDate() : 1;
+<script>
+const messages = [
+  "Dzień 1: Wesołego grudnia! ❄️",
+  "Dzień 2: Miłego dnia 💙",
+  "Dzień 3: Jesteś super!",
+  "Dzień 4: Ciepła herbata i kocyk ☕",
+  "Dzień 5: Uśmiech proszę 😄",
+  "Dzień 6: Jesteś ważna!",
+  "Dzień 7: Zimowa magia dla Sylwii ✨",
+  "Dzień 8: Dziś będzie pięknie!",
+  "Dzień 9: Buziak 💋",
+  "Dzień 10: Jesteś wyjątkowa",
+  "Dzień 11: Czas na relaks~",
+  "Dzień 12: Dobra energia dla Ciebie",
+  "Dzień 13: Małe szczęścia są najważniejsze",
+  "Dzień 14: Dziś będzie lekko ❄️",
+  "Dzień 15: You got this!",
+  "Dzień 16: Grudniowy vibe 🎶",
+  "Dzień 17: Dla najfajniejszej Sylwii",
+  "Dzień 18: Jesteś kochana",
+  "Dzień 19: Ciepłe myśli ✨",
+  "Dzień 20: Zrób coś miłego dla siebie",
+  "Dzień 21: Uśmiech działa cuda",
+  "Dzień 22: Dobre rzeczy nadchodzą",
+  "Dzień 23: Prawie święta! 🎄",
+  "Dzień 24: Wesołych Świąt Sylwia! 🎁"
+];
 
-      for(let i=1;i<=24;i++){
-        const div = document.createElement('div');
-        div.className='door';
-        div.dataset.day=i;
-        div.innerHTML=`
-          <div class="door-inner">
+const today = (new Date().getMonth() === 11) ? new Date().getDate() : 1;
+
+// generowanie drzwi
+for(let i=1;i<=24;i++){
+    const div = document.createElement('div');
+    div.className='door';
+    div.dataset.day=i;
+    div.innerHTML=`
+        <div class="door-inner">
             <div class="door-front"><img src="images/${i}.png" alt="Dzień ${i}"></div>
             <div class="door-back">${messages[i-1]}</div>
-          </div>
-        `;
-        document.querySelector('.calendar-grid').appendChild(div);
-      }
+        </div>
+    `;
+    document.querySelector('.calendar-grid').appendChild(div);
+}
 
-      document.querySelectorAll('.door').forEach(door=>{
-        door.addEventListener('click', ()=>{
-          const day = parseInt(door.dataset.day);
-          if(day <= today){
+// kliknięcia drzwi
+document.querySelectorAll('.door').forEach(door=>{
+    door.addEventListener('click', ()=>{
+        const day = parseInt(door.dataset.day);
+        if(day <= today){
             door.classList.add('opened');
             const back = door.querySelector('.door-back').textContent;
             const popup = document.createElement('div');
@@ -162,17 +195,28 @@
             popup.innerHTML = `<div class="popup-box"><h2>Dzień ${day}</h2><p>${back}</p><button>Zamknij</button></div>`;
             document.body.appendChild(popup);
             popup.querySelector('button').onclick = ()=> popup.remove();
-          } else {
+        } else {
             const popup = document.createElement('div');
             popup.className='popup';
             popup.innerHTML = `<div class="popup-box"><h2>Uuuu!</h2><p>Nie oszukuj! 🔒</p><button>Zamknij</button></div>`;
             document.body.appendChild(popup);
             popup.querySelector('button').onclick = ()=> popup.remove();
-          }
-        });
-      });
-    </script>
-  </div>
-</div>
+        }
+    });
+}
+
+// Śnieg
+function createSnowflake(){
+    const snow = document.createElement('div');
+    snow.className='snowflake';
+    snow.style.left=Math.random()*window.innerWidth+'px';
+    snow.style.fontSize=(Math.random()*10+10)+'px';
+    snow.style.animationDuration=(Math.random()*5+5)+'s';
+    snow.textContent='❄';
+    document.body.appendChild(snow);
+    setTimeout(()=> snow.remove(), 10000);
+}
+setInterval(createSnowflake, 200);
+</script>
 </body>
 </html>
