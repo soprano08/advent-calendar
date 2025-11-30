@@ -159,24 +159,41 @@
     22:"Dobre rzeczy nadchodzą", 23:"Prawie święta! 🎄", 24:"Wesołych Świąt Sylwia! 🎁"
   };
 
+  // dzisiejszy dzień grudnia
+  const today = new Date().getMonth() === 11 ? new Date().getDate() : 1; // grudzień = 11
   document.querySelectorAll('.door').forEach(door => {
     door.addEventListener('click', () => {
-      const day = door.dataset.day;
-      const text = messages[day] || ("Dzień " + day);
-      door.classList.add("opened");
+      const day = parseInt(door.dataset.day);
+      if(day <= today){
+        const text = messages[day] || ("Dzień " + day);
+        door.classList.add("opened");
 
-      const popup = document.createElement("div");
-      popup.className = "popup";
-      popup.innerHTML = `
-        <div class="popup-box">
-          <h2>Dzień ${day}</h2>
-          <p style="margin-top:10px;font-size:18px;">${text}</p>
-          <button>Zamknij</button>
-        </div>
-      `;
+        const popup = document.createElement("div");
+        popup.className = "popup";
+        popup.innerHTML = `
+          <div class="popup-box">
+            <h2>Dzień ${day}</h2>
+            <p style="margin-top:10px;font-size:18px;">${text}</p>
+            <button>Zamknij</button>
+          </div>
+        `;
 
-      document.body.appendChild(popup);
-      popup.querySelector("button").onclick = () => popup.remove();
+        document.body.appendChild(popup);
+        popup.querySelector("button").onclick = () => popup.remove();
+      } else {
+        // przyszły dzień
+        const popup = document.createElement("div");
+        popup.className = "popup";
+        popup.innerHTML = `
+          <div class="popup-box">
+            <h2>Uuuu!</h2>
+            <p style="margin-top:10px;font-size:18px;">Nie oszukuj! 🔒</p>
+            <button>Zamknij</button>
+          </div>
+        `;
+        document.body.appendChild(popup);
+        popup.querySelector("button").onclick = () => popup.remove();
+      }
     });
   });
 </script>
