@@ -1,3 +1,4 @@
+/* --- Podstawowe style strony --- */
 body {
     margin: 0;
     font-family: 'Playfair Display', serif;
@@ -20,12 +21,14 @@ header {
     padding: 0 16px;
 }
 
+/* --- Siatka kalendarza --- */
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px,1fr));
     gap: 15px;
 }
 
+/* --- Drzwi okienek --- */
 .door {
     position: relative;
     width: 100%;
@@ -36,7 +39,7 @@ header {
 
 .door-inner {
     position: absolute;
-    top: 0; left: 0; right:0; bottom:0;
+    top: 0; left: 0; right: 0; bottom: 0;
     transition: transform 0.6s;
     transform-style: preserve-3d;
 }
@@ -59,6 +62,7 @@ header {
     color: #fff;
 }
 
+/* Front drzwi (możesz podmienić obraz) */
 .door-front {
     background: #2b6cb0 url('https://cdn.pixabay.com/photo/2016/12/19/19/44/snow-1910627_1280.png') center/cover no-repeat;
 }
@@ -69,6 +73,7 @@ header {
     transform: rotateY(180deg);
 }
 
+/* --- Popup --- */
 .popup {
     position: fixed;
     top:0; left:0;
@@ -99,3 +104,24 @@ header {
 }
 .popup button:hover { background:#1e63d6; }
 
+/* --- Śnieg z ruchem wiatru --- */
+.snowflake {
+    position: fixed;
+    top: -10px;
+    z-index: 9999;
+    pointer-events: none;
+    user-select: none;
+    color: white;
+    font-size: 1em;
+    animation-name: fallWind;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes fallWind {
+    0%   { transform: translateY(0) translateX(0); opacity:1; }
+    25%  { transform: translateY(25vh) translateX(15px); opacity:0.9; }
+    50%  { transform: translateY(50vh) translateX(-10px); opacity:0.8; }
+    75%  { transform: translateY(75vh) translateX(10px); opacity:0.6; }
+    100% { transform: translateY(100vh) translateX(0); opacity:0; }
+}
