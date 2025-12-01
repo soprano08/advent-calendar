@@ -11,8 +11,8 @@ body {
     font-family:'Playfair Display', serif;
     background: url('images/background.jpg') no-repeat center center fixed;
     background-size: cover;
-    overflow-x: hidden;
     position: relative;
+    overflow-x: hidden;
 }
 header {
     text-align:center;
@@ -140,36 +140,22 @@ header {
 </div>
 
 <script>
+// czekamy aż DOM się załaduje
+document.addEventListener("DOMContentLoaded", function(){
+
 const messages = [
-  "Dzień 1: Wesołego grudnia! ❄️",
-  "Dzień 2: Miłego dnia 💙",
-  "Dzień 3: Jesteś super!",
-  "Dzień 4: Ciepła herbata i kocyk ☕",
-  "Dzień 5: Uśmiech proszę 😄",
-  "Dzień 6: Jesteś ważna!",
-  "Dzień 7: Zimowa magia dla Sylwii ✨",
-  "Dzień 8: Dziś będzie pięknie!",
-  "Dzień 9: Buziak 💋",
-  "Dzień 10: Jesteś wyjątkowa",
-  "Dzień 11: Czas na relaks~",
-  "Dzień 12: Dobra energia dla Ciebie",
-  "Dzień 13: Małe szczęścia są najważniejsze",
-  "Dzień 14: Dziś będzie lekko ❄️",
-  "Dzień 15: You got this!",
-  "Dzień 16: Grudniowy vibe 🎶",
-  "Dzień 17: Dla najfajniejszej Sylwii",
-  "Dzień 18: Jesteś kochana",
-  "Dzień 19: Ciepłe myśli ✨",
-  "Dzień 20: Zrób coś miłego dla siebie",
-  "Dzień 21: Uśmiech działa cuda",
-  "Dzień 22: Dobre rzeczy nadchodzą",
-  "Dzień 23: Prawie święta! 🎄",
-  "Dzień 24: Wesołych Świąt Sylwia! 🎁"
+  "Dzień 1: Wesołego grudnia! ❄️","Dzień 2: Miłego dnia 💙","Dzień 3: Jesteś super!","Dzień 4: Ciepła herbata i kocyk ☕",
+  "Dzień 5: Uśmiech proszę 😄","Dzień 6: Jesteś ważna!","Dzień 7: Zimowa magia dla Sylwii ✨","Dzień 8: Dziś będzie pięknie!",
+  "Dzień 9: Buziak 💋","Dzień 10: Jesteś wyjątkowa","Dzień 11: Czas na relaks~","Dzień 12: Dobra energia dla Ciebie",
+  "Dzień 13: Małe szczęścia są najważniejsze","Dzień 14: Dziś będzie lekko ❄️","Dzień 15: You got this!","Dzień 16: Grudniowy vibe 🎶",
+  "Dzień 17: Dla najfajniejszej Sylwii","Dzień 18: Jesteś kochana","Dzień 19: Ciepłe myśli ✨","Dzień 20: Zrób coś miłego dla siebie",
+  "Dzień 21: Uśmiech działa cuda","Dzień 22: Dobre rzeczy nadchodzą","Dzień 23: Prawie święta! 🎄","Dzień 24: Wesołych Świąt Sylwia! 🎁"
 ];
 
 const today = (new Date().getMonth() === 11) ? new Date().getDate() : 1;
 
 // generowanie drzwi
+const grid = document.querySelector('.calendar-grid');
 for(let i=1;i<=24;i++){
     const div = document.createElement('div');
     div.className='door';
@@ -180,7 +166,7 @@ for(let i=1;i<=24;i++){
             <div class="door-back">${messages[i-1]}</div>
         </div>
     `;
-    document.querySelector('.calendar-grid').appendChild(div);
+    grid.appendChild(div);
 }
 
 // kliknięcia drzwi
@@ -210,13 +196,15 @@ function createSnowflake(){
     const snow = document.createElement('div');
     snow.className='snowflake';
     snow.style.left=Math.random()*window.innerWidth+'px';
-    snow.style.fontSize=(Math.random()*10+10)+'px';
+    snow.style.fontSize=(Math.random()*15+10)+'px';
     snow.style.animationDuration=(Math.random()*5+5)+'s';
     snow.textContent='❄';
     document.body.appendChild(snow);
     setTimeout(()=> snow.remove(), 10000);
 }
 setInterval(createSnowflake, 200);
+
+});
 </script>
 </body>
 </html>
