@@ -3,6 +3,7 @@ body {
     margin: 0;
     font-family: 'Playfair Display', serif;
     background: linear-gradient(#e8f4ff, #ffffff);
+    overflow-x: hidden;
 }
 
 header {
@@ -33,21 +34,30 @@ header {
     position: relative;
     width: 100%;
     padding-top: 100%; /* kwadrat */
-    perspective: 800px;
+    perspective: 1000px;
     cursor: pointer;
 }
 
+/* Drzwi wewnętrzne z efektem bounce */
 .door-inner {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    transition: transform 0.6s;
+    transition: transform 0.6s cubic-bezier(0.68,-0.55,0.265,1.55); /* bounce */
     transform-style: preserve-3d;
 }
 
+/* Drzwi otwarte */
 .door.opened .door-inner {
     transform: rotateY(180deg);
 }
 
+/* Efekt hover - lekki obrót w 3D */
+.door:hover .door-inner {
+    transform: rotateY(10deg) rotateX(5deg);
+    transition: transform 0.3s ease-out;
+}
+
+/* Front i back drzwi */
 .door-front, .door-back {
     position: absolute;
     width: 100%; height: 100%;
@@ -59,18 +69,39 @@ header {
     justify-content: center;
     font-size: 24px;
     font-weight: 700;
-    color: #fff;
+    overflow: hidden;
 }
 
-/* Front drzwi (możesz podmienić obraz) */
+/* Front drzwi z ramką świąteczną */
 .door-front {
     background: #2b6cb0 url('https://cdn.pixabay.com/photo/2016/12/19/19/44/snow-1910627_1280.png') center/cover no-repeat;
+    border: 4px solid #ff0000; /* czerwona ramka */
+    box-shadow: 0 0 0 4px #00ff00 inset; /* zielona wewnętrzna ramka */
+    position: relative;
 }
 
+/* Dodanie dekoracji gałązek (pseudo-element) */
+.door-front::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+    border: 3px solid transparent;
+    border-image: url('https://cdn.pixabay.com/photo/2017/11/30/19/10/christmas-2989588_1280.png') 30 round; 
+    border-image-slice: 30;
+    border-radius: 12px;
+    pointer-events: none;
+}
+
+/* Back drzwi */
 .door-back {
     background: #d1e7ff;
     color: #1e3a8a;
     transform: rotateY(180deg);
+    text-align: center;
+    padding: 10px;
 }
 
 /* --- Popup --- */
@@ -82,6 +113,7 @@ header {
     display:flex;
     justify-content:center;
     align-items:center;
+    z-index: 1000;
 }
 
 .popup-box {
