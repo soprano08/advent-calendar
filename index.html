@@ -178,5 +178,28 @@ function createSnowflake(){
 }
 setInterval(createSnowflake,200);
 </script>
+<script>
+// Funkcja tworząca pojedynczą śnieżynkę
+function createSnowflake(){
+    const snow = document.createElement('div');
+    snow.className = 'snowflake';
+    snow.textContent = '❄';
+    // Losowa pozycja pozioma
+    snow.style.left = Math.random() * window.innerWidth + 'px';
+    // Losowy rozmiar
+    snow.style.fontSize = (Math.random() * 15 + 10) + 'px';
+    // Losowa prędkość spadania
+    snow.style.animationDuration = (Math.random() * 5 + 5) + 's';
+    // Dodajemy do body
+    document.body.appendChild(snow);
+    // Usuwamy po zakończeniu animacji
+    setTimeout(() => snow.remove(), 10000);
+}
+
+// Co 150ms tworzona jest nowa śnieżynka
+setInterval(createSnowflake, 150);
+</script>
+
+    
 </body>
 </html>
