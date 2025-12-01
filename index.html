@@ -31,19 +31,18 @@ header {
     display:grid;
     grid-template-columns:repeat(6,1fr);
     gap:10px;
-    perspective:1000px;
 }
 .door{
     position:relative;
     width:100%;
-    padding-top:100%;
+    padding-bottom:100%; /* kwadrat */
     cursor:pointer;
 }
 .door-inner{
     position:absolute;
     top:0; left:0; right:0; bottom:0;
     transform-style: preserve-3d;
-    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.8s;
 }
 .door.opened .door-inner{
     transform: rotateY(180deg);
@@ -57,29 +56,22 @@ header {
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:24px;
+    font-size:18px;
     font-weight:700;
     box-shadow:0 4px 12px rgba(0,0,0,0.3);
     overflow:hidden;
 }
-.door-front img {
+.door-front img{
     width:100%;
     height:100%;
     object-fit: cover;
     border-radius:12px;
-    transform: scale(1);
-    transition: transform 0.3s;
-}
-.door:hover .door-front img {
-    transform: scale(1.05);
 }
 .door-back{
     background: rgba(255,255,255,0.9);
-    color:#1e3a8a;
     transform: rotateY(180deg);
-    padding:10px;
-    box-sizing: border-box;
     text-align:center;
+    padding:10px;
 }
 .popup{
     position:fixed;
@@ -93,57 +85,44 @@ header {
 }
 .popup-box{
     background:white;
-    padding:30px;
-    border-radius:14px;
+    padding:20px;
+    border-radius:12px;
     text-align:center;
-    max-width:400px;
-    width:90%;
-    animation: popupFade 0.3s ease-out;
 }
 .popup button{
-    margin-top:15px;
-    padding:8px 16px;
+    margin-top:10px;
+    padding:6px 12px;
     border:none;
     background:#3b82f6;
     color:white;
-    border-radius:10px;
+    border-radius:8px;
     cursor:pointer;
 }
-.popup button:hover{background:#1e63d6;}
-@keyframes popupFade{
-    from {opacity:0; transform: scale(0.8);}
-    to {opacity:1; transform: scale(1);}
-}
 /* Śnieg */
-.snowflake {
+.snowflake{
     position: fixed;
-    top: -10px;
-    z-index: 9999;
-    user-select: none;
-    pointer-events: none;
-    color: white;
-    font-size: 1em;
-    animation-name: fall;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
+    top:-10px;
+    z-index:9999;
+    pointer-events:none;
+    color:white;
+    user-select:none;
+    font-size:1em;
+    animation: fall linear infinite;
 }
-@keyframes fall {
-    0% { transform: translateY(0) translateX(0); opacity:1; }
-    100% { transform: translateY(100vh) translateX(50px); opacity:0; }
+@keyframes fall{
+    0%{transform: translateY(0) translateX(0); opacity:1;}
+    100%{transform: translateY(100vh) translateX(50px); opacity:0;}
 }
 </style>
 </head>
 <body>
 <header>Kalendarz dla Sylwii</header>
 <div class="container">
-  <div class="calendar-grid"></div>
+    <div class="calendar-grid" id="grid"></div>
 </div>
 
 <script>
-// czekamy aż DOM się załaduje
-document.addEventListener("DOMContentLoaded", function(){
-
-const messages = [
+const messages=[
   "Dzień 1: Wesołego grudnia! ❄️","Dzień 2: Miłego dnia 💙","Dzień 3: Jesteś super!","Dzień 4: Ciepła herbata i kocyk ☕",
   "Dzień 5: Uśmiech proszę 😄","Dzień 6: Jesteś ważna!","Dzień 7: Zimowa magia dla Sylwii ✨","Dzień 8: Dziś będzie pięknie!",
   "Dzień 9: Buziak 💋","Dzień 10: Jesteś wyjątkowa","Dzień 11: Czas na relaks~","Dzień 12: Dobra energia dla Ciebie",
@@ -151,60 +130,53 @@ const messages = [
   "Dzień 17: Dla najfajniejszej Sylwii","Dzień 18: Jesteś kochana","Dzień 19: Ciepłe myśli ✨","Dzień 20: Zrób coś miłego dla siebie",
   "Dzień 21: Uśmiech działa cuda","Dzień 22: Dobre rzeczy nadchodzą","Dzień 23: Prawie święta! 🎄","Dzień 24: Wesołych Świąt Sylwia! 🎁"
 ];
+const today=(new Date().getMonth()===11)?new Date().getDate():1;
 
-const today = (new Date().getMonth() === 11) ? new Date().getDate() : 1;
-
-// generowanie drzwi
-const grid = document.querySelector('.calendar-grid');
+const grid=document.getElementById('grid');
 for(let i=1;i<=24;i++){
-    const div = document.createElement('div');
+    const div=document.createElement('div');
     div.className='door';
     div.dataset.day=i;
-    div.innerHTML=`
-        <div class="door-inner">
-            <div class="door-front"><img src="images/${i}.png" alt="Dzień ${i}"></div>
-            <div class="door-back">${messages[i-1]}</div>
-        </div>
-    `;
+    div.innerHTML=`<div class="door-inner">
+        <div class="door-front"><img src="images/${i}.png" alt="Dzień ${i}"></div>
+        <div class="door-back">${messages[i-1]}</div>
+    </div>`;
     grid.appendChild(div);
 }
 
-// kliknięcia drzwi
-document.querySelectorAll('.door').forEach(door=>{
-    door.addEventListener('click', ()=>{
-        const day = parseInt(door.dataset.day);
-        if(day <= today){
-            door.classList.add('opened');
-            const back = door.querySelector('.door-back').textContent;
-            const popup = document.createElement('div');
+// kliknięcia
+document.querySelectorAll('.door').forEach(d=>{
+    d.addEventListener('click', ()=>{
+        const day=parseInt(d.dataset.day);
+        if(day<=today){
+            d.classList.add('opened');
+            const popup=document.createElement('div');
             popup.className='popup';
-            popup.innerHTML = `<div class="popup-box"><h2>Dzień ${day}</h2><p>${back}</p><button>Zamknij</button></div>`;
+            popup.innerHTML=`<div class="popup-box"><h2>Dzień ${day}</h2><p>${messages[day-1]}</p><button>Zamknij</button></div>`;
             document.body.appendChild(popup);
-            popup.querySelector('button').onclick = ()=> popup.remove();
-        } else {
-            const popup = document.createElement('div');
+            popup.querySelector('button').onclick=()=>popup.remove();
+        }else{
+            const popup=document.createElement('div');
             popup.className='popup';
-            popup.innerHTML = `<div class="popup-box"><h2>Uuuu!</h2><p>Nie oszukuj! 🔒</p><button>Zamknij</button></div>`;
+            popup.innerHTML=`<div class="popup-box"><h2>Uuuu!</h2><p>Nie oszukuj! 🔒</p><button>Zamknij</button></div>`;
             document.body.appendChild(popup);
-            popup.querySelector('button').onclick = ()=> popup.remove();
+            popup.querySelector('button').onclick=()=>popup.remove();
         }
     });
-}
+});
 
-// Śnieg
+// śnieg
 function createSnowflake(){
-    const snow = document.createElement('div');
+    const snow=document.createElement('div');
     snow.className='snowflake';
     snow.style.left=Math.random()*window.innerWidth+'px';
     snow.style.fontSize=(Math.random()*15+10)+'px';
     snow.style.animationDuration=(Math.random()*5+5)+'s';
     snow.textContent='❄';
     document.body.appendChild(snow);
-    setTimeout(()=> snow.remove(), 10000);
+    setTimeout(()=>snow.remove(),10000);
 }
-setInterval(createSnowflake, 200);
-
-});
+setInterval(createSnowflake,200);
 </script>
 </body>
 </html>
