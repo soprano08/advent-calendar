@@ -1,33 +1,65 @@
-const messages = {
-1:"Wesołego grudnia! ❄️",2:"Miłego dnia 💙",3:"Jesteś super!",
-4:"Ciepła herbata i kocyk ☕",5:"Uśmiech proszę 😄",6:"Jesteś ważna!",
-7:"Zimowa magia dla Sylwii ✨",8:"Dziś będzie pięknie!",9:"Buziak 💋",
-10:"Jesteś wyjątkowa",11:"Czas na relaks~",12:"Dobra energia dla Ciebie",
-13:"Małe szczęścia są najważniejsze",14:"Dziś będzie lekko ❄️",15:"You got this!",
-16:"Grudniowy vibe 🎶",17:"Dla najfajniejszej Sylwii",18:"Jesteś kochana",
-19:"Ciepłe myśli ✨",20:"Zrób coś miłego dla siebie",21:"Uśmiech działa cuda",
-22:"Dobre rzeczy nadchodzą",23:"Prawie święta! 🎄",24:"Wesołych Świąt Sylwia! 🎁"
-};
+const calendar = document.getElementById('calendar');
+const popup = document.getElementById('popup');
+const popupText = document.getElementById('popup-text');
+const popupClose = document.getElementById('popup-close');
 
-const today = new Date().getMonth() === 11 ? new Date().getDate() : 1;
+const messages = [
+    "Wesołych Świąt!", "Czekoladka 1", "Czekoladka 2", "Czekoladka 3",
+    "Czekoladka 4", "Czekoladka 5", "Czekoladka 6", "Czekoladka 7",
+    "Czekoladka 8", "Czekoladka 9", "Czekoladka 10", "Czekoladka 11",
+    "Czekoladka 12", "Czekoladka 13", "Czekoladka 14", "Czekoladka 15",
+    "Czekoladka 16", "Czekoladka 17", "Czekoladka 18", "Czekoladka 19",
+    "Czekoladka 20", "Czekoladka 21", "Czekoladka 22", "Czekoladka 23",
+    "Czekoladka 24"
+];
 
-document.querySelectorAll('.door').forEach(door=>{
-    door.addEventListener('click', ()=>{
-        const day = parseInt(door.dataset.day);
-        if(day <= today){
+// Generowanie drzwi
+for (let i=1; i<=24; i++){
+    const door = document.createElement('div');
+    door.className = 'door';
+    door.dataset.day = i;
+
+    const inner = document.createElement('div');
+    inner.className = 'door-inner';
+
+    const front = document.createElement('div');
+    front.className = 'door-front';
+    front.textContent = i;
+
+    const back = document.createElement('div');
+    back.className = 'door-back';
+    back.textContent = messages[i-1];
+
+    inner.appendChild(front);
+    inner.appendChild(back);
+    door.appendChild(inner);
+    calendar.appendChild(door);
+
+    door.addEventListener('click', () => {
+        const today = new Date().getDate(); // aktualny dzień miesiąca
+        if (i <= today){
             door.classList.add('opened');
-
-            const popup = document.createElement('div');
-            popup.className='popup';
-            popup.innerHTML=`<div class="popup-box"><h2>Dzień ${day}</h2><p>${messages[day]}</p><button>Zamknij</button></div>`;
-            document.body.appendChild(popup);
-            popup.querySelector('button').onclick = ()=> popup.remove();
         } else {
-            const popup = document.createElement('div');
-            popup.className='popup';
-            popup.innerHTML=`<div class="popup-box"><h2>Uuuu!</h2><p>Nie oszukuj! 🔒</p><button>Zamknij</button></div>`;
-            document.body.appendChild(popup);
-            popup.querySelector('button').onclick = ()=> popup.remove();
+            popupText.textContent = "Uuuu, nie oszukuj!";
+            popup.style.display = 'flex';
         }
     });
+}
+
+// Popup close
+popupClose.addEventListener('click', () => {
+    popup.style.display = 'none';
 });
+
+// --- Śnieg ---
+function createSnowflake(){
+    const snow = document.createElement('div');
+    snow.className = 'snowflake';
+    snow.textContent = '❄';
+    snow.style.left = Math.random() * window.innerWidth + 'px';
+    snow.style.fontSize = (Math.random() * 15 + 10) + 'px';
+    snow.style.animationDuration = (Math.random() * 5 + 5) + 's';
+    document.body.appendChild(snow);
+    setTimeout(() => snow.remove(), 10000);
+}
+setInterval(createSnowflake, 100);
