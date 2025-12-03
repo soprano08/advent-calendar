@@ -9,7 +9,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: #eee;
+    background: #f0f0f0;
     padding: 20px;
 }
 
@@ -25,16 +25,18 @@ body {
     height: 100%;
     border-radius: 50%;
     border: 10px solid #333;
-    /* Koło czerwone z białymi paskami między segmentami */
-    background: repeating-conic-gradient(
-        red 0deg 45deg, 
-        white 45deg 47deg
-    );
-    display: flex;
-    align-items: center;
-    justify-content: center;
     position: relative;
     transition: transform 4s ease-out;
+}
+
+.slice {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0% 0%;
+    clip-path: polygon(100% 0, 0 0, 0 100%);
 }
 
 .number {
@@ -44,7 +46,6 @@ body {
     transform-origin: center center;
 }
 
-/* STRZAŁKA */
 #pointer {
     width: 0;
     height: 0;
@@ -87,7 +88,7 @@ body {
 </div>
 
 <script>
-// NUMERY I NAGRODY
+// NAGRODY
 const prizes = {
     1: "Dresy",
     2: "Gatki z niespodzianką",
@@ -99,26 +100,36 @@ const prizes = {
     8: "Nie do wylosowania"
 };
 
+// KOLORY SEGMENTÓW
+const colors = ["#FF6B6B","#FFD93D","#6BCB77","#4D96FF","#FF6F91","#845EC2","#00C9A7","#FF9671"];
+
 const wheel = document.getElementById("wheel");
 const spinBtn = document.getElementById("spinBtn");
 const legendDiv = document.getElementById("legend");
 
-// dodaj numerki na kole
+// Tworzenie segmentów
 const sliceCount = 8;
 const angleStep = 360 / sliceCount;
-for (let i = 1; i <= sliceCount; i++) {
+
+for (let i = 0; i < sliceCount; i++) {
+    let slice = document.createElement("div");
+    slice.className = "slice";
+    slice.style.background = colors[i];
+    slice.style.transform = `rotate(${i*angleStep}deg) skewY(${90 - angleStep}deg)`;
+    wheel.appendChild(slice);
+
+    // Numer na kole
     let num = document.createElement("div");
     num.className = "number";
-    num.textContent = i;
-    const angle = (i - 1) * angleStep + angleStep/2;
-    const radius = 250; // połowa wielkości koła
-    const rad = angle * Math.PI / 180;
-    num.style.left = `${50 + radius/300 * Math.cos(rad)*50}%`;
-    num.style.top = `${50 + radius/300 * Math.sin(rad)*50}%`;
+    num.textContent = i+1;
+    const rad = (i*angleStep + angleStep/2) * Math.PI / 180;
+    const r = 250;
+    num.style.left = `${50 + r/300 * Math.cos(rad)*50}%`;
+    num.style.top = `${50 + r/300 * Math.sin(rad)*50}%`;
     wheel.appendChild(num);
 }
 
-// dodaj legendę
+// Dodaj legendę
 for (let i = 1; i <= sliceCount; i++) {
     let item = document.createElement("div");
     item.className = "legend-item";
@@ -126,7 +137,7 @@ for (let i = 1; i <= sliceCount; i++) {
     legendDiv.appendChild(item);
 }
 
-// sprawdzamy, czy wynik już jest w localStorage i ustawiamy koło
+// Sprawdzenie localStorage
 let savedResult = localStorage.getItem("wheelResultNumber");
 if (savedResult) {
     spinBtn.disabled = true;
@@ -134,9 +145,9 @@ if (savedResult) {
     wheel.style.transform = `rotate(${finalAngle}deg)`;
 }
 
-// losowanie
+// Losowanie
 spinBtn.onclick = function() {
-    const possible = [1,2,3,4,5,6,7]; // numer 8 nie do wylosowania
+    const possible = [1,2,3,4,5,6,7]; // 8 niewylosowalny
     const selected = possible[Math.floor(Math.random() * possible.length)];
 
     const finalAngle = 3600 + (sliceCount - selected) * angleStep + angleStep/2;
@@ -144,7 +155,7 @@ spinBtn.onclick = function() {
 
     spinBtn.disabled = true;
 
-    // zapis do localStorage
+    // Zapis do localStorage
     localStorage.setItem("wheelResultNumber", selected);
 };
 </script>
