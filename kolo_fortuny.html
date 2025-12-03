@@ -24,7 +24,6 @@
         transition: transform 5s ease-out;
     }
 
-    /* kolory pól */
     .slice {
         position: absolute;
         width: 50%;
@@ -34,6 +33,14 @@
         transform-origin: 0% 0%;
         background: #ffcc00;
         border: 1px solid #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 14px;
+        padding: 5px;
+        box-sizing: border-box;
+        text-align: center;
     }
 
     .slice:nth-child(2) { transform: rotate(60deg); background:#ff6666; }
@@ -47,7 +54,7 @@
         height: 0;
         border-left: 15px solid transparent;
         border-right: 15px solid transparent;
-        border-top: 30px solid red; /* wskaźnik skierowany w górę */
+        border-top: 30px solid red;
         margin: 20px auto;
     }
 
@@ -64,13 +71,13 @@
 
     #result {
         margin-top: 30px;
-        font-size: 24px;
+        font-size: 22px;
         font-weight: bold;
     }
 
     #spin-count {
         margin-top: 20px;
-        font-size: 20px;
+        font-size: 18px;
         color: #333;
     }
 </style>
@@ -82,12 +89,12 @@
 
 <div id="pointer"></div>
 <div id="wheel">
-    <div class="slice">Filmik jezykowy</div>
-    <div class="slice">Penis w calosci</div>
+    <div class="slice">Filmik językowy</div>
+    <div class="slice">Penis w całości</div>
     <div class="slice">Sesja buziakowa</div>
-    <div class="slice">Troche glosowek</div>
-    <div class="slice">Klata na zyczenie</div>
-    <div class="slice">Dlonie na zyczenie</div>
+    <div class="slice">Trochę głosówek</div>
+    <div class="slice">Klatka na życzenie</div>
+    <div class="slice">Dłonie na życzenie</div>
 </div>
 
 <button onclick="spin()">Zakręć kołem</button>
@@ -96,7 +103,7 @@
 <div id="spin-count">Liczba zakręceń: 0</div>
 
 <script>
-    // Pobierz zapisany licznik z localStorage lub ustaw 0
+    // Pobierz licznik z localStorage lub ustaw 0
     let spinCount = localStorage.getItem('spinCount') ? parseInt(localStorage.getItem('spinCount')) : 0;
     document.getElementById('spin-count').innerText = "Liczba zakręceń: " + spinCount;
 
@@ -107,21 +114,28 @@
         const random = Math.floor(Math.random() * 360 + 3600); 
         wheel.style.transform = "rotate(" + random + "deg)";
 
+        // Pełna lista nagród (dla wyświetlania w podziale pól koła)
         const prizes = [
-            "🎄 Świąteczna niespodzianka dla Sylwii!",
-            "🍬 Słodki smakołyk!",
-            "🎁 Mały prezent od Mikołaja!",
-            "⭐ Punkt bonusowy!",
-            "☕ Gorąca czekolada!",
-            "❄️ Zimowa nagroda!"
+            "Filmik językowy",
+            "Penis w całości",   // zostaje w HTML dla wyglądu
+            "Sesja buziakowa",
+            "Trochę głosówek",
+            "Klatka na życzenie",
+            "Dłonie na życzenie",
+            "Gatki z niespodzianką",
+            "Dresy"
         ];
 
-        const index = Math.floor(((random % 360) / 60));
+        // Lista nagród do faktycznego losowania (0% szans na Penis w całości)
+        const prizesForDraw = prizes.filter(p => p !== "Penis w całości");
+
+        // Losowy index wśród nagród do losowania
+        const index = Math.floor(Math.random() * prizesForDraw.length);
 
         setTimeout(() => {
-            result.innerHTML = prizes[index];
+            result.innerHTML = "Wylosowano: " + prizesForDraw[index];
 
-            // Zwiększ licznik i zapisz w localStorage
+            // Aktualizacja licznika zakręceń
             spinCount++;
             localStorage.setItem('spinCount', spinCount);
             document.getElementById('spin-count').innerText = "Liczba zakręceń: " + spinCount;
