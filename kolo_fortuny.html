@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Koło Fortuny</title>
 
 <style>
@@ -10,20 +10,26 @@
         font-family: Arial, sans-serif;
         background: #f2f2f2;
         text-align: center;
-        padding-top: 50px;
+        padding: 30px;
     }
 
+    h1 {
+        margin-bottom: 25px;
+    }
+
+    /* ----- KOŁO ----- */
     #wheel {
-        width: 300px;
-        height: 300px;
+        width: 450px;
+        height: 450px;
         border-radius: 50%;
-        border: 8px solid #333;
+        border: 10px solid #333;
         margin: 0 auto;
         position: relative;
         overflow: hidden;
         transition: transform 5s ease-out;
     }
 
+    /* ----- POLA ----- */
     .slice {
         position: absolute;
         width: 50%;
@@ -31,63 +37,68 @@
         top: 50%;
         left: 50%;
         transform-origin: 0% 0%;
-        background: #ffcc00;
         border: 1px solid #333;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: bold;
-        font-size: 14px;
-        padding: 5px;
-        box-sizing: border-box;
+        font-size: 16px;
+        padding: 8px;
         text-align: center;
+        box-sizing: border-box;
+        background: #ffd966;
     }
 
-    .slice:nth-child(2) { transform: rotate(60deg); background:#ff6666; }
-    .slice:nth-child(3) { transform: rotate(120deg); background:#66ccff; }
-    .slice:nth-child(4) { transform: rotate(180deg); background:#99ff99; }
-    .slice:nth-child(5) { transform: rotate(240deg); background:#ff99ff; }
-    .slice:nth-child(6) { transform: rotate(300deg); background:#ff9966; }
+    .slice:nth-child(2) { transform: rotate(60deg);  background:#ff6961; }
+    .slice:nth-child(3) { transform: rotate(120deg); background:#77dd77; }
+    .slice:nth-child(4) { transform: rotate(180deg); background:#84b6f4; }
+    .slice:nth-child(5) { transform: rotate(240deg); background:#ffb347; }
+    .slice:nth-child(6) { transform: rotate(300deg); background:#c49bd3; }
 
+    /* ----- WSKAŹNIK ----- */
     #pointer {
         width: 0;
         height: 0;
-        border-left: 15px solid transparent;
-        border-right: 15px solid transparent;
-        border-top: 30px solid red;
+        border-left: 25px solid transparent;
+        border-right: 25px solid transparent;
+        border-top: 40px solid red;
         margin: 20px auto;
     }
 
     button {
-        margin-top: 40px;
-        padding: 10px 20px;
+        margin-top: 35px;
+        padding: 12px 25px;
         background: #333;
-        color: #fff;
+        color: white;
         border: none;
         cursor: pointer;
-        font-size: 18px;
+        font-size: 20px;
         border-radius: 10px;
+    }
+
+    button:disabled {
+        background: #777;
+        cursor: not-allowed;
     }
 
     #result {
         margin-top: 30px;
-        font-size: 22px;
+        font-size: 24px;
         font-weight: bold;
     }
 
     #spin-count {
-        margin-top: 20px;
+        margin-top: 10px;
         font-size: 18px;
-        color: #333;
     }
 </style>
-
 </head>
 <body>
 
 <h1>Koło Fortuny 🎁</h1>
 
 <div id="pointer"></div>
+
 <div id="wheel">
     <div class="slice">Filmik językowy</div>
     <div class="slice">Penis w całości</div>
@@ -97,27 +108,47 @@
     <div class="slice">Dłonie na życzenie</div>
 </div>
 
-<button onclick="spin()">Zakręć kołem</button>
+<button id="spinBtn" onclick="spin()">Zakręć kołem</button>
 
 <div id="result"></div>
-<div id="spin-count">Liczba zakręceń: 0</div>
+<div id="spin-count"></div>
 
 <script>
-    // Pobierz licznik z localStorage lub ustaw 0
-    let spinCount = localStorage.getItem('spinCount') ? parseInt(localStorage.getItem('spinCount')) : 0;
-    document.getElementById('spin-count').innerText = "Liczba zakręceń: " + spinCount;
+    // ===============================
+    //      OGRANICZENIE 1x DZIENNIE
+    // ===============================
+
+    const spinBtn = document.getElementById("spinBtn");
+    const result = document.getElementById("result");
+
+    // wczytaj datę ostatniego zakręcenia
+    const lastSpin = localStorage.getItem("lastSpinDate");
+    const today = new Date().toDateString();
+
+    if (lastSpin === today) {
+        spinBtn.disabled = true;
+        result.innerHTML = "Możesz zakręcić jutro! ❄️";
+    }
+
+    // licznik
+    let spinCount = localStorage.getItem("spinCount")
+        ? parseInt(localStorage.getItem("spinCount"))
+        : 0;
+
+    document.getElementById("spin-count").innerHTML =
+        "Łączna liczba zakręceń: " + spinCount;
 
     function spin() {
         const wheel = document.getElementById("wheel");
-        const result = document.getElementById("result");
 
-        const random = Math.floor(Math.random() * 360 + 3600); 
+        // animacja
+        const random = Math.floor(Math.random() * 360 + 3600);
         wheel.style.transform = "rotate(" + random + "deg)";
 
-        // Pełna lista nagród (dla wyświetlania w podziale pól koła)
+        // WSZYSTKIE nagrody (widoczne na kole)
         const prizes = [
             "Filmik językowy",
-            "Penis w całości",   // zostaje w HTML dla wyglądu
+            "Penis w całości",
             "Sesja buziakowa",
             "Trochę głosówek",
             "Klatka na życzenie",
@@ -126,19 +157,26 @@
             "Dresy"
         ];
 
-        // Lista nagród do faktycznego losowania (0% szans na Penis w całości)
+        // LOSOWANIE — BEZ penisa
         const prizesForDraw = prizes.filter(p => p !== "Penis w całości");
 
-        // Losowy index wśród nagród do losowania
         const index = Math.floor(Math.random() * prizesForDraw.length);
 
         setTimeout(() => {
+            // wynik
             result.innerHTML = "Wylosowano: " + prizesForDraw[index];
 
-            // Aktualizacja licznika zakręceń
+            // zapamiętaj, że dzisiaj już kręcono
+            localStorage.setItem("lastSpinDate", today);
+
+            // wyłącz przycisk
+            spinBtn.disabled = true;
+
+            // aktualizacja licznika
             spinCount++;
-            localStorage.setItem('spinCount', spinCount);
-            document.getElementById('spin-count').innerText = "Liczba zakręceń: " + spinCount;
+            localStorage.setItem("spinCount", spinCount);
+            document.getElementById("spin-count").innerHTML =
+                "Łączna liczba zakręceń: " + spinCount;
         }, 5200);
     }
 </script>
