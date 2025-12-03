@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<title>Koło fortuny</title>
+<title>Koło Fortuny</title>
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -42,7 +42,7 @@ body {
 .number {
     position: absolute;
     font-weight: bold;
-    font-size: 24px;
+    font-size: 28px;
     transform-origin: center center;
 }
 
@@ -51,9 +51,9 @@ body {
     height: 0;
     border-left: 25px solid transparent;
     border-right: 25px solid transparent;
-    border-top: 40px solid black;
+    border-top: 50px solid black;
     position: absolute;
-    top: -50px;
+    top: -60px;
     left: 50%;
     transform: translateX(-50%);
 }
@@ -76,6 +76,8 @@ body {
 </head>
 <body>
 
+<h1>Koło Fortuny</h1>
+
 <div id="wheelContainer">
     <div id="pointer"></div>
     <div id="wheel"></div>
@@ -88,7 +90,7 @@ body {
 </div>
 
 <script>
-// NAGRODY
+// NAGRODY NUMERÓW
 const prizes = {
     1: "Dresy",
     2: "Gatki z niespodzianką",
@@ -107,18 +109,19 @@ const wheel = document.getElementById("wheel");
 const spinBtn = document.getElementById("spinBtn");
 const legendDiv = document.getElementById("legend");
 
-// Tworzenie segmentów
+// Tworzenie segmentów i numerów
 const sliceCount = 8;
 const angleStep = 360 / sliceCount;
 
 for (let i = 0; i < sliceCount; i++) {
+    // segment
     let slice = document.createElement("div");
     slice.className = "slice";
     slice.style.background = colors[i];
     slice.style.transform = `rotate(${i*angleStep}deg) skewY(${90 - angleStep}deg)`;
     wheel.appendChild(slice);
 
-    // Numer na kole
+    // numer
     let num = document.createElement("div");
     num.className = "number";
     num.textContent = i+1;
@@ -147,7 +150,7 @@ if (savedResult) {
 
 // Losowanie
 spinBtn.onclick = function() {
-    const possible = [1,2,3,4,5,6,7]; // 8 niewylosowalny
+    const possible = [1,2,3,4,5,6,7]; // numer 8 niewylosowalny
     const selected = possible[Math.floor(Math.random() * possible.length)];
 
     const finalAngle = 3600 + (sliceCount - selected) * angleStep + angleStep/2;
@@ -155,7 +158,6 @@ spinBtn.onclick = function() {
 
     spinBtn.disabled = true;
 
-    // Zapis do localStorage
     localStorage.setItem("wheelResultNumber", selected);
 };
 </script>
