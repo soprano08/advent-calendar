@@ -25,6 +25,7 @@ body {
     height: 100%;
     border-radius: 50%;
     border: 10px solid #333;
+    /* Koło czerwone z białymi paskami między segmentami */
     background: repeating-conic-gradient(
         red 0deg 45deg, 
         white 45deg 47deg
@@ -43,6 +44,7 @@ body {
     transform-origin: center center;
 }
 
+/* STRZAŁKA */
 #pointer {
     width: 0;
     height: 0;
@@ -59,12 +61,6 @@ body {
     margin-top: 20px;
     padding: 10px 20px;
     font-size: 18px;
-}
-
-#result {
-    margin-top: 20px;
-    font-size: 24px;
-    font-weight: bold;
 }
 
 #legend {
@@ -85,7 +81,6 @@ body {
 </div>
 
 <button id="spinBtn">Zakręć</button>
-<div id="result"></div>
 
 <div id="legend">
     <h3>Legenda:</h3>
@@ -106,7 +101,6 @@ const prizes = {
 
 const wheel = document.getElementById("wheel");
 const spinBtn = document.getElementById("spinBtn");
-const resultDiv = document.getElementById("result");
 const legendDiv = document.getElementById("legend");
 
 // dodaj numerki na kole
@@ -132,29 +126,26 @@ for (let i = 1; i <= sliceCount; i++) {
     legendDiv.appendChild(item);
 }
 
-// sprawdzamy, czy wynik już jest w localStorage
-let savedResult = localStorage.getItem("wheelResult");
+// sprawdzamy, czy wynik już jest w localStorage i ustawiamy koło
+let savedResult = localStorage.getItem("wheelResultNumber");
 if (savedResult) {
-    resultDiv.textContent = "Wylosowano: " + savedResult;
     spinBtn.disabled = true;
+    const finalAngle = 3600 + (sliceCount - parseInt(savedResult)) * angleStep + angleStep/2;
+    wheel.style.transform = `rotate(${finalAngle}deg)`;
 }
 
 // losowanie
 spinBtn.onclick = function() {
-    // lista numerów do losowania (bez 8)
-    const possible = [1,2,3,4,5,6,7];
+    const possible = [1,2,3,4,5,6,7]; // numer 8 nie do wylosowania
     const selected = possible[Math.floor(Math.random() * possible.length)];
 
-    // obrót koła - losujemy kąt tak, aby wybrany numer znalazł się pod strzałką
     const finalAngle = 3600 + (sliceCount - selected) * angleStep + angleStep/2;
     wheel.style.transform = `rotate(${finalAngle}deg)`;
 
-    // wyświetlenie po 4s
-    setTimeout(() => {
-        resultDiv.textContent = "Wylosowano: " + prizes[selected];
-        spinBtn.disabled = true;
-        localStorage.setItem("wheelResult", prizes[selected]);
-    }, 4000);
+    spinBtn.disabled = true;
+
+    // zapis do localStorage
+    localStorage.setItem("wheelResultNumber", selected);
 };
 </script>
 
