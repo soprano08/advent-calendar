@@ -43,13 +43,13 @@
     .slice:nth-child(6) { transform: rotate(300deg); background:#ff9966; }
 
     #pointer {
-    width: 0;
-    height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-top: 30px solid red; /* zmienione z border-bottom */
-    margin: 20px auto;
-}
+        width: 0;
+        height: 0;
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-top: 30px solid red; /* wskaźnik skierowany w górę */
+        margin: 20px auto;
+    }
 
     button {
         margin-top: 40px;
@@ -66,6 +66,12 @@
         margin-top: 30px;
         font-size: 24px;
         font-weight: bold;
+    }
+
+    #spin-count {
+        margin-top: 20px;
+        font-size: 20px;
+        color: #333;
     }
 </style>
 
@@ -87,8 +93,13 @@
 <button onclick="spin()">Zakręć kołem</button>
 
 <div id="result"></div>
+<div id="spin-count">Liczba zakręceń: 0</div>
 
 <script>
+    // Pobierz zapisany licznik z localStorage lub ustaw 0
+    let spinCount = localStorage.getItem('spinCount') ? parseInt(localStorage.getItem('spinCount')) : 0;
+    document.getElementById('spin-count').innerText = "Liczba zakręceń: " + spinCount;
+
     function spin() {
         const wheel = document.getElementById("wheel");
         const result = document.getElementById("result");
@@ -96,21 +107,24 @@
         const random = Math.floor(Math.random() * 360 + 3600); 
         wheel.style.transform = "rotate(" + random + "deg)";
 
-        // Wyniki dla 6 pól
         const prizes = [
-            "🎄 Świąteczna niespodzianka!",
+            "🎄 Świąteczna niespodzianka dla Sylwii!",
             "🍬 Słodki smakołyk!",
-            "🎁 Mały prezent!",
+            "🎁 Mały prezent od Mikołaja!",
             "⭐ Punkt bonusowy!",
             "☕ Gorąca czekolada!",
             "❄️ Zimowa nagroda!"
         ];
 
-        // oblicz zwycięskie pole z losowania
         const index = Math.floor(((random % 360) / 60));
-        
+
         setTimeout(() => {
             result.innerHTML = prizes[index];
+
+            // Zwiększ licznik i zapisz w localStorage
+            spinCount++;
+            localStorage.setItem('spinCount', spinCount);
+            document.getElementById('spin-count').innerText = "Liczba zakręceń: " + spinCount;
         }, 5200);
     }
 </script>
