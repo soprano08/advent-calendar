@@ -2,176 +2,125 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Koło Fortuny</title>
+<title>Koło fortuny</title>
 
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f2f2f2;
-        text-align: center;
-        padding-top: 50px;
-    }
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #eee;
+}
 
-    h1 {
-        margin-bottom: 20px;
-    }
+#wheel {
+    position: relative;
+    width: 500px;
+    height: 500px;
+    border: 10px solid #333;
+    border-radius: 50%;
+    margin: 40px auto;
+    overflow: hidden;
+}
 
-    #pointer {
-        width: 0;
-        height: 0;
-        border-left: 25px solid transparent;
-        border-right: 25px solid transparent;
-        border-bottom: 45px solid red;
-        margin: 20px auto;
-    }
+.slice {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0% 0%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-    /* DUŻE KOŁO */
-    #wheel {
-        width: 500px;
-        height: 500px;
-        border-radius: 50%;
-        border: 10px solid #333;
-        margin: 0 auto;
-        position: relative;
-        overflow: hidden;
-        transition: transform 5s ease-out;
-    }
+/* TEKST W PIONIE */
+.slice span {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 18px;
+    font-weight: bold;
+    pointer-events: none;
+}
 
-    /* KAWAŁKI KOŁA */
-    .slice {
-        position: absolute;
-        width: 50%;
-        height: 50%;
-        top: 50%;
-        left: 50%;
-        transform-origin: 0% 0%;
-        border: 1px solid #333;
-    }
-
-    /* 8 POLI */
-    .slice:nth-child(1) { transform: rotate(0deg);   background:#ff9999; }
-    .slice:nth-child(2) { transform: rotate(45deg);  background:#ffcc66; }
-    .slice:nth-child(3) { transform: rotate(90deg);  background:#99ff99; }
-    .slice:nth-child(4) { transform: rotate(135deg); background:#66ccff; }
-    .slice:nth-child(5) { transform: rotate(180deg); background:#cc99ff; }
-    .slice:nth-child(6) { transform: rotate(225deg); background:#ff9966; }
-    .slice:nth-child(7) { transform: rotate(270deg); background:#ffff66; }
-    .slice:nth-child(8) { transform: rotate(315deg); background:#66ffcc; }
-
-    /* NAPISY PIONOWO */
-    .slice span {
-        position: absolute;
-        left: 10px;
-        bottom: 10px;
-        writing-mode: vertical-rl;
-        font-size: 20px;
-        font-weight: bold;
-        transform: rotate(180deg);
-        height: calc(100% - 20px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        pointer-events: none;
-    }
-
-    button {
-        margin-top: 30px;
-        padding: 12px 28px;
-        background: #333;
-        color: #fff;
-        border: none;
-        cursor: pointer;
-        font-size: 22px;
-        border-radius: 12px;
-    }
-
-    #result {
-        margin-top: 30px;
-        font-size: 28px;
-        font-weight: bold;
-    }
+#pointer {
+    width: 0;
+    height: 0;
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    border-bottom: 40px solid red;
+    margin: 0 auto;
+}
 </style>
 
 </head>
 <body>
 
-<h1>Koło Fortuny 🎁</h1>
+<h2>Zakolej szczęścia 😎</h2>
 
 <div id="pointer"></div>
 
-<div id="wheel">
-    <div class="slice"><span>Filmik językowy</span></div>
-    <div class="slice"><span>Sesja buziakowa</span></div>
-    <div class="slice"><span>Trochę głosówek</span></div>
-    <div class="slice"><span>Klata na życzenie</span></div>
-    <div class="slice"><span>Dłonie na życzenie</span></div>
-    <div class="slice"><span>Dresy</span></div>
-    <div class="slice"><span>Gatki z niespodzianką</span></div>
-    <div class="slice"><span>Penis w całości</span></div>
-</div>
+<div id="wheel"></div>
 
-<button onclick="spin()">Zakręć kołem</button>
+<button id="spinBtn">Zakręć</button>
 
-<div id="result"></div>
+<p id="result"></p>
 
 <script>
+let canSpin = true;
 
-    /* NAGRODY — OSTATNIA MA 0% SZANS */
-    const prizes = [
-        "Filmik językowy",
-        "Sesja buziakowa",
-        "Trochę głosówek",
-        "Klata na życzenie",
-        "Dłonie na życzenie",
-        "Dresy",
-        "Gatki z niespodzianką",
-        "Penis w całości"   // 0% szans
-    ];
+// NAGRODY
+// Uwaga: "Penis w całości" MA 0% SZANS — nie będzie w tablicy losowania
+let prizes = [
+    "Dresy",
+    "Gatki z niespodzianką",
+    "Sesja buziakowa",
+    "Filmik językowy",
+    "Klata na życzenie",
+    "Dłonie na życzenie",
+    "Trochę głosówek",
+    "Penis w całości"  // jest na kole wizualnie, ale nie w losowaniu
+];
 
-    /* SZANSE — ostatnie pole = 0 */
-    const weights = [
-        15, 15, 15, 15, 15, 15, 10, 0
-    ];
+// KOLORY
+let colors = ["#ff6", "#6ff", "#99f", "#f96", "#9f9", "#6cf", "#fc9", "#cff"];
 
-    /* MOŻNA TYLKO RAZ KRĘCIĆ */
-    if (localStorage.getItem("spun")) {
-        document.querySelector("button").disabled = true;
-        document.querySelector("button").innerText = "Już zakręciłaś 😎";
-    }
+let wheel = document.getElementById("wheel");
+let sliceCount = prizes.length;
+let angleStep = 360 / sliceCount;
 
-    function spin() {
 
-        if (localStorage.getItem("spun")) return;
+// RENDEROWANIE SEKCJI
+for (let i = 0; i < sliceCount; i++) {
+    let slice = document.createElement("div");
+    slice.className = "slice";
+    slice.style.background = colors[i % colors.length];
+    slice.style.transform = `rotate(${i * angleStep}deg) skewY(${90 - angleStep}deg)`;
+    slice.innerHTML = `<span>${prizes[i]}</span>`;
+    wheel.appendChild(slice);
+}
 
-        const wheel = document.getElementById("wheel");
-        const result = document.getElementById("result");
 
-        /* LOSOWANIE Z WAGAMI */
-        const totalWeight = weights.reduce((a,b)=>a+b,0);
-        let random = Math.random() * totalWeight;
-        let chosen = 0;
+document.getElementById("spinBtn").onclick = function() {
+    if (!canSpin) return;
+    canSpin = true;
 
-        for (let i = 0; i < weights.length; i++) {
-            random -= weights[i];
-            if (random < 0) {
-                chosen = i;
-                break;
-            }
-        }
+    // losujemy BEZ penisa
+    let safePrizes = prizes.filter(p => p !== "Penis w całości");
+    let selected = safePrizes[Math.floor(Math.random() * safePrizes.length)];
 
-        /* OBRÓT KOŁA */
-        const deg = 360 * 8 + (360 - chosen * 45 - 22.5);
-        wheel.style.transform = `rotate(${deg}deg)`;
+    let randomDeg = 3600 + Math.random() * 360;
 
-        setTimeout(() => {
-            result.innerHTML = "Wylosowałaś: <br><br> 🎁 <b>" + prizes[chosen] + "</b>";
-            localStorage.setItem("spun", "true");
-            document.querySelector("button").disabled = true;
-            document.querySelector("button").innerText = "Już zakręciłaś 😎";
-        }, 5200);
-    }
+    wheel.style.transition = "transform 4s ease-out";
+    wheel.style.transform = `rotate(${randomDeg}deg)`;
 
+    document.getElementById("result").innerHTML = "Losuję...";
+
+    setTimeout(() => {
+        document.getElementById("result").innerHTML = "Wylosowano: " + selected;
+        document.getElementById("spinBtn").disabled = true;
+        canSpin = false;
+    }, 4000);
+};
 </script>
 
 </body>
