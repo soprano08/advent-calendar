@@ -7,18 +7,17 @@
 <style>
 body {
     font-family: Arial, sans-serif;
-    text-align: center;
-    background: #eee;
     display: flex;
-    flex-direction: row;
     justify-content: center;
     align-items: flex-start;
     gap: 40px;
     padding: 20px;
+    background: #eee;
 }
 
 #wheelContainer {
     position: relative;
+    text-align: center;
 }
 
 #wheel {
@@ -37,20 +36,21 @@ body {
     top: 50%;
     left: 50%;
     transform-origin: 0% 0%;
+    border-right: 2px solid white; /* biały pasek */
+    background: red;
 }
 
-/* wskaźnik DO DOŁU */
+/* wskaźnik skierowany w dół */
 #pointer {
     width: 0;
     height: 0;
     border-left: 25px solid transparent;
     border-right: 25px solid transparent;
-    border-top: 40px solid red;
-    margin: 0 auto;
-    margin-bottom: 20px;
+    border-top: 40px solid black;
+    margin: 0 auto 20px auto;
 }
 
-/* kolor + nagroda */
+/* wyświetlanie wylosowanego koloru i nagrody */
 #resultBox {
     display: flex;
     align-items: center;
@@ -65,34 +65,25 @@ body {
     border: 2px solid #333;
 }
 
-/* legenda po boku */
-#legend {
+/* lista nagród obok koła */
+#prizesList {
     text-align: left;
 }
-.legend-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-    gap: 8px;
-}
-.color-square {
-    width: 20px;
-    height: 20px;
-    border: 1px solid #333;
+#prizesList ul {
+    padding-left: 20px;
 }
 
+/* historia */
 #history {
-    margin-top: 10px;
-    text-align: left;
+    margin-top: 20px;
+    background: #fff;
+    border: 1px solid #333;
+    padding: 10px;
+    width: 300px;
     max-height: 200px;
     overflow-y: auto;
-    background: #fff;
-    padding: 10px;
-    border: 1px solid #333;
-    width: 300px;
 }
 </style>
-
 </head>
 <body>
 
@@ -104,12 +95,15 @@ body {
         <div id="colorBox"></div>
         <p id="result"></p>
     </div>
-    <button id="showHistoryBtn">Pokaż historię Sylwii</button>
-    <div id="history"></div>
+    <div id="history">
+        <h3>Ostatnie losowania:</h3>
+        <div id="historyList"></div>
+    </div>
 </div>
 
-<div id="legend">
-    <h3>Legenda kolorów:</h3>
+<div id="prizesList">
+    <h3>Co do wygrania:</h3>
+    <ul id="prizesUl"></ul>
 </div>
 
 <script>
@@ -124,70 +118,61 @@ let prizes = [
     "Penis w całości"
 ];
 
-let colors = ["#ff6", "#6ff", "#99f", "#f96", "#9f9", "#6cf", "#fc9", "#cff"];
+let colors = Array(prizes.length).fill("red"); // całość czerwone
 
 let wheel = document.getElementById("wheel");
 let sliceCount = prizes.length;
 let angleStep = 360 / sliceCount;
 
-// Tworzenie koła
+// tworzenie segmentów
 for (let i = 0; i < sliceCount; i++) {
     let slice = document.createElement("div");
     slice.className = "slice";
-    slice.style.background = colors[i % colors.length];
     slice.style.transform = `rotate(${i * angleStep}deg) skewY(${90 - angleStep}deg)`;
     wheel.appendChild(slice);
 }
 
-// Tworzenie legendy
-let legend = document.getElementById("legend");
-for (let i = 0; i < prizes.length; i++) {
-    let item = document.createElement("div");
-    item.className = "legend-item";
-    item.innerHTML = `<div class="color-square" style="background:${colors[i]}"></div> ${prizes[i]}`;
-    legend.appendChild(item);
-}
+// lista nagród obok koła
+let prizesUl = document.getElementById("prizesUl");
+prizes.forEach(p => {
+    let li = document.createElement("li");
+    li.textContent = p;
+    prizesUl.appendChild(li);
+});
 
+// funkcja do aktualizacji historii
+function updateHistory() {
+    let history = JSON.parse(localStorage.getItem("wheelHistory") || "[]");
+    let historyDiv = document.getElementById("historyList");
+    historyDiv.innerHTML = history.slice(-10).map(h => `${h.time}: ${h.prize}`).join("<br>");
+}
+updateHistory();
+
+// kręcenie kołem
 document.getElementById("spinBtn").onclick = function() {
-    // losowy obrót + kilka pełnych obrotów
-    let randomDeg = 3600 + Math.random() * 360; 
+    let randomDeg = 3600 + Math.random() * 360;
     wheel.style.transition = "transform 4s ease-out";
     wheel.style.transform = `rotate(${randomDeg}deg)`;
 
     document.getElementById("result").innerHTML = "Losuję...";
-    document.getElementById("colorBox").style.background = "#fff";
+    document.getElementById("colorBox").style.background = "white";
 
     setTimeout(() => {
         // kąt końcowy 0-360
         let finalDeg = randomDeg % 360;
-
-        // indeks segmentu pod wskaźnikiem
         let index = sliceCount - 1 - Math.floor(finalDeg / angleStep);
-
         let selectedPrize = prizes[index];
-        let selectedColor = colors[index];
 
         document.getElementById("result").innerHTML = selectedPrize;
-        document.getElementById("colorBox").style.background = selectedColor;
+        document.getElementById("colorBox").style.background = "red";
 
         // zapis historii
         let history = JSON.parse(localStorage.getItem("wheelHistory") || "[]");
-        history.push({
-            name: "Sylwia",
-            prize: selectedPrize,
-            color: selectedColor,
-            time: new Date().toISOString()
-        });
+        history.push({prize: selectedPrize, time: new Date().toLocaleString()});
         localStorage.setItem("wheelHistory", JSON.stringify(history));
-    }, 4000);
-};
 
-// Pokazywanie historii
-document.getElementById("showHistoryBtn").onclick = function() {
-    let history = JSON.parse(localStorage.getItem("wheelHistory") || "[]");
-    let sylwiaHistory = history.filter(h => h.name === "Sylwia");
-    let historyDiv = document.getElementById("history");
-    historyDiv.innerHTML = sylwiaHistory.map(h => `${h.time}: ${h.prize} (${h.color})`).join("<br>") || "Brak wyników";
+        updateHistory();
+    }, 4000);
 };
 </script>
 
