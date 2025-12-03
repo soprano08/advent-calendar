@@ -3,33 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <title>Koło fortuny</title>
-
 <style>
 body {
     font-family: Arial, sans-serif;
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 40px;
-    padding: 20px;
+    flex-direction: column;
+    align-items: center;
     background: #eee;
+    padding: 20px;
 }
 
 #wheelContainer {
     position: relative;
-    text-align: center;
+    width: 600px;
+    height: 600px;
+    margin-bottom: 20px;
 }
 
 #wheel {
-    width: 500px;
-    height: 500px;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
     border: 10px solid #333;
     background: repeating-conic-gradient(
-        red 0deg 45deg,   /* czerwony segment */
-        white 45deg 47deg /* biały pasek między segmentami */
+        red 0deg 45deg, 
+        white 45deg 47deg
     );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
     transition: transform 4s ease-out;
+}
+
+.number {
+    position: absolute;
+    font-weight: bold;
+    font-size: 24px;
+    transform-origin: center center;
 }
 
 #pointer {
@@ -38,38 +49,31 @@ body {
     border-left: 25px solid transparent;
     border-right: 25px solid transparent;
     border-top: 40px solid black;
-    margin: 0 auto 20px auto;
+    position: absolute;
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-#resultBox {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
+#spinBtn {
     margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 18px;
 }
 
-#colorBox {
-    width: 50px;
-    height: 50px;
-    border: 2px solid #333;
+#result {
+    margin-top: 20px;
+    font-size: 24px;
+    font-weight: bold;
 }
 
-#prizesList {
+#legend {
+    margin-top: 30px;
     text-align: left;
 }
-#prizesList ul {
-    padding-left: 20px;
-}
 
-#history {
-    margin-top: 20px;
-    background: #fff;
-    border: 1px solid #333;
-    padding: 10px;
-    width: 300px;
-    max-height: 200px;
-    overflow-y: auto;
+.legend-item {
+    margin-bottom: 5px;
 }
 </style>
 </head>
@@ -78,75 +82,78 @@ body {
 <div id="wheelContainer">
     <div id="pointer"></div>
     <div id="wheel"></div>
-    <button id="spinBtn">Zakręć</button>
-    <div id="resultBox">
-        <div id="colorBox"></div>
-        <p id="result"></p>
-    </div>
-    <div id="history">
-        <h3>Ostatnie losowania:</h3>
-        <div id="historyList"></div>
-    </div>
 </div>
 
-<div id="prizesList">
-    <h3>Co do wygrania:</h3>
-    <ul id="prizesUl"></ul>
+<button id="spinBtn">Zakręć</button>
+<div id="result"></div>
+
+<div id="legend">
+    <h3>Legenda:</h3>
 </div>
 
 <script>
-let prizes = [
-    "Dresy",
-    "Gatki z niespodzianką",
-    "Sesja buziakowa",
-    "Filmik językowy",
-    "Klata na życzenie",
-    "Dłonie na życzenie",
-    "Trochę głosówek",
-    "Penis w całości"
-];
+// NUMERY I NAGRODY
+const prizes = {
+    1: "Dresy",
+    2: "Gatki z niespodzianką",
+    3: "Sesja buziakowa",
+    4: "Filmik językowy",
+    5: "Klata na życzenie",
+    6: "Dłonie na życzenie",
+    7: "Trochę głosówek",
+    8: "Nie do wylosowania"
+};
 
-let sliceCount = prizes.length;
-let angleStep = 360 / sliceCount;
+const wheel = document.getElementById("wheel");
+const spinBtn = document.getElementById("spinBtn");
+const resultDiv = document.getElementById("result");
+const legendDiv = document.getElementById("legend");
 
-// lista nagród
-let prizesUl = document.getElementById("prizesUl");
-prizes.forEach(p => {
-    let li = document.createElement("li");
-    li.textContent = p;
-    prizesUl.appendChild(li);
-});
-
-// historia
-function updateHistory() {
-    let history = JSON.parse(localStorage.getItem("wheelHistory") || "[]");
-    let historyDiv = document.getElementById("historyList");
-    historyDiv.innerHTML = history.slice(-10).map(h => `${h.time}: ${h.prize}`).join("<br>");
+// dodaj numerki na kole
+const sliceCount = 8;
+const angleStep = 360 / sliceCount;
+for (let i = 1; i <= sliceCount; i++) {
+    let num = document.createElement("div");
+    num.className = "number";
+    num.textContent = i;
+    const angle = (i - 1) * angleStep + angleStep/2;
+    const radius = 250; // połowa wielkości koła
+    const rad = angle * Math.PI / 180;
+    num.style.left = `${50 + radius/300 * Math.cos(rad)*50}%`;
+    num.style.top = `${50 + radius/300 * Math.sin(rad)*50}%`;
+    wheel.appendChild(num);
 }
-updateHistory();
 
-// kręcenie kołem
-let wheel = document.getElementById("wheel");
-document.getElementById("spinBtn").onclick = function() {
-    let randomDeg = 3600 + Math.random() * 360;
-    wheel.style.transform = `rotate(${randomDeg}deg)`;
+// dodaj legendę
+for (let i = 1; i <= sliceCount; i++) {
+    let item = document.createElement("div");
+    item.className = "legend-item";
+    item.textContent = `${i}: ${prizes[i]}`;
+    legendDiv.appendChild(item);
+}
 
-    document.getElementById("result").innerHTML = "Losuję...";
-    document.getElementById("colorBox").style.background = "white";
+// sprawdzamy, czy wynik już jest w localStorage
+let savedResult = localStorage.getItem("wheelResult");
+if (savedResult) {
+    resultDiv.textContent = "Wylosowano: " + savedResult;
+    spinBtn.disabled = true;
+}
 
+// losowanie
+spinBtn.onclick = function() {
+    // lista numerów do losowania (bez 8)
+    const possible = [1,2,3,4,5,6,7];
+    const selected = possible[Math.floor(Math.random() * possible.length)];
+
+    // obrót koła - losujemy kąt tak, aby wybrany numer znalazł się pod strzałką
+    const finalAngle = 3600 + (sliceCount - selected) * angleStep + angleStep/2;
+    wheel.style.transform = `rotate(${finalAngle}deg)`;
+
+    // wyświetlenie po 4s
     setTimeout(() => {
-        let finalDeg = randomDeg % 360;
-        let index = sliceCount - 1 - Math.floor(finalDeg / angleStep);
-        let selectedPrize = prizes[index];
-
-        document.getElementById("result").innerHTML = selectedPrize;
-        document.getElementById("colorBox").style.background = "red";
-
-        let history = JSON.parse(localStorage.getItem("wheelHistory") || "[]");
-        history.push({prize: selectedPrize, time: new Date().toLocaleString()});
-        localStorage.setItem("wheelHistory", JSON.stringify(history));
-
-        updateHistory();
+        resultDiv.textContent = "Wylosowano: " + prizes[selected];
+        spinBtn.disabled = true;
+        localStorage.setItem("wheelResult", prizes[selected]);
     }, 4000);
 };
 </script>
