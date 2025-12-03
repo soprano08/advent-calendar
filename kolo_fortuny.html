@@ -149,27 +149,28 @@ for (let i = 0; i < prizes.length; i++) {
 }
 
 document.getElementById("spinBtn").onclick = function() {
-    // losowanie bez "Penis w całości"
-    let safePrizes = prizes.filter(p => p !== "Penis w całości");
-    let selectedIndex = Math.floor(Math.random() * safePrizes.length);
-    let selectedPrize = safePrizes[selectedIndex];
-    let selectedColor = colors[selectedIndex];
+    // losowanie segmentu (z pominięciem "Penis w całości")
+    let safeIndices = prizes.map((p,i) => i).filter(i => prizes[i] !== "Penis w całości");
+    let selectedIndex = safeIndices[Math.floor(Math.random() * safeIndices.length)];
 
-    // animacja koła
-    let randomDeg = 3600 + Math.random() * 360;
+    // obrót koła tak, żeby wskaźnik zatrzymał się na wybranym segmencie
+    let randomRounds = 10; // pełne obroty
+    let targetAngle = 360 - (selectedIndex * angleStep + angleStep / 2); 
+    let totalRotation = 360 * randomRounds + targetAngle;
+
     wheel.style.transition = "transform 4s ease-out";
-    wheel.style.transform = `rotate(${randomDeg}deg)`;
+    wheel.style.transform = `rotate(${totalRotation}deg)`;
 
     document.getElementById("result").innerHTML = "Losuję...";
     document.getElementById("colorBox").style.background = "#fff";
 
     setTimeout(() => {
-        document.getElementById("result").innerHTML = selectedPrize;
-        document.getElementById("colorBox").style.background = selectedColor;
+        document.getElementById("result").innerHTML = prizes[selectedIndex];
+        document.getElementById("colorBox").style.background = colors[selectedIndex];
 
-        // zapis do localStorage
+        // zapis historii
         let history = JSON.parse(localStorage.getItem("wheelHistory") || "[]");
-        history.push({name: "Sylwia", prize: selectedPrize, color: selectedColor, time: new Date().toISOString()});
+        history.push({name: "Sylwia", prize: prizes[selectedIndex], color: colors[selectedIndex], time: new Date().toISOString()});
         localStorage.setItem("wheelHistory", JSON.stringify(history));
     }, 4000);
 };
