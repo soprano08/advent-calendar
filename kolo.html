@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Koło Fortuny</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        text-align: center;
+        padding-top: 50px;
+    }
+
+    #wheel {
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        border: 8px solid #333;
+        margin: 0 auto;
+        position: relative;
+        overflow: hidden;
+        transition: transform 5s ease-out;
+    }
+
+    /* kolory pól */
+    .slice {
+        position: absolute;
+        width: 50%;
+        height: 50%;
+        top: 50%;
+        left: 50%;
+        transform-origin: 0% 0%;
+        background: #ffcc00;
+        border: 1px solid #333;
+    }
+
+    .slice:nth-child(2) { transform: rotate(60deg); background:#ff6666; }
+    .slice:nth-child(3) { transform: rotate(120deg); background:#66ccff; }
+    .slice:nth-child(4) { transform: rotate(180deg); background:#99ff99; }
+    .slice:nth-child(5) { transform: rotate(240deg); background:#ff99ff; }
+    .slice:nth-child(6) { transform: rotate(300deg); background:#ff9966; }
+
+    #pointer {
+        width: 0;
+        height: 0;
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-bottom: 30px solid red;
+        margin: 20px auto;
+    }
+
+    button {
+        margin-top: 40px;
+        padding: 10px 20px;
+        background: #333;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+        border-radius: 10px;
+    }
+
+    #result {
+        margin-top: 30px;
+        font-size: 24px;
+        font-weight: bold;
+    }
+</style>
+
+</head>
+<body>
+
+<h1>Koło Fortuny 🎁</h1>
+
+<div id="pointer"></div>
+<div id="wheel">
+    <div class="slice">🎄</div>
+    <div class="slice">🍬</div>
+    <div class="slice">🎁</div>
+    <div class="slice">⭐</div>
+    <div class="slice">☕</div>
+    <div class="slice">❄️</div>
+</div>
+
+<button onclick="spin()">Zakręć kołem</button>
+
+<div id="result"></div>
+
+<script>
+    function spin() {
+        const wheel = document.getElementById("wheel");
+        const result = document.getElementById("result");
+
+        const random = Math.floor(Math.random() * 360 + 3600); 
+        wheel.style.transform = "rotate(" + random + "deg)";
+
+        // Wyniki dla 6 pól
+        const prizes = [
+            "🎄 Świąteczna niespodzianka!",
+            "🍬 Słodki smakołyk!",
+            "🎁 Mały prezent!",
+            "⭐ Punkt bonusowy!",
+            "☕ Gorąca czekolada!",
+            "❄️ Zimowa nagroda!"
+        ];
+
+        // oblicz zwycięskie pole z losowania
+        const index = Math.floor(((random % 360) / 60));
+        
+        setTimeout(() => {
+            result.innerHTML = prizes[index];
+        }, 5200);
+    }
+</script>
+
+</body>
+</html>
