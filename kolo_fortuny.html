@@ -21,26 +21,17 @@ body {
 }
 
 #wheel {
-    position: relative;
     width: 500px;
     height: 500px;
-    border: 10px solid #333;
     border-radius: 50%;
-    overflow: hidden;
+    border: 10px solid #333;
+    background: repeating-conic-gradient(
+        red 0deg 45deg,   /* czerwony segment */
+        white 45deg 47deg /* biały pasek między segmentami */
+    );
+    transition: transform 4s ease-out;
 }
 
-.slice {
-    position: absolute;
-    width: 50%;
-    height: 50%;
-    top: 50%;
-    left: 50%;
-    transform-origin: 0% 0%;
-    background: red;
-    border-right: 2px solid white; /* linia między segmentami */
-}
-
-/* wskaźnik skierowany w dół */
 #pointer {
     width: 0;
     height: 0;
@@ -50,7 +41,6 @@ body {
     margin: 0 auto 20px auto;
 }
 
-/* wyświetlanie wylosowanego koloru i nagrody */
 #resultBox {
     display: flex;
     align-items: center;
@@ -65,7 +55,6 @@ body {
     border: 2px solid #333;
 }
 
-/* lista nagród obok koła */
 #prizesList {
     text-align: left;
 }
@@ -73,7 +62,6 @@ body {
     padding-left: 20px;
 }
 
-/* historia */
 #history {
     margin-top: 20px;
     background: #fff;
@@ -118,19 +106,10 @@ let prizes = [
     "Penis w całości"
 ];
 
-let wheel = document.getElementById("wheel");
 let sliceCount = prizes.length;
 let angleStep = 360 / sliceCount;
 
-// tworzenie segmentów
-for (let i = 0; i < sliceCount; i++) {
-    let slice = document.createElement("div");
-    slice.className = "slice";
-    slice.style.transform = `rotate(${i * angleStep}deg) skewY(${90 - angleStep}deg)`;
-    wheel.appendChild(slice);
-}
-
-// lista nagród obok koła
+// lista nagród
 let prizesUl = document.getElementById("prizesUl");
 prizes.forEach(p => {
     let li = document.createElement("li");
@@ -138,7 +117,7 @@ prizes.forEach(p => {
     prizesUl.appendChild(li);
 });
 
-// aktualizacja historii
+// historia
 function updateHistory() {
     let history = JSON.parse(localStorage.getItem("wheelHistory") || "[]");
     let historyDiv = document.getElementById("historyList");
@@ -147,9 +126,9 @@ function updateHistory() {
 updateHistory();
 
 // kręcenie kołem
+let wheel = document.getElementById("wheel");
 document.getElementById("spinBtn").onclick = function() {
     let randomDeg = 3600 + Math.random() * 360;
-    wheel.style.transition = "transform 4s ease-out";
     wheel.style.transform = `rotate(${randomDeg}deg)`;
 
     document.getElementById("result").innerHTML = "Losuję...";
@@ -163,7 +142,6 @@ document.getElementById("spinBtn").onclick = function() {
         document.getElementById("result").innerHTML = selectedPrize;
         document.getElementById("colorBox").style.background = "red";
 
-        // zapis historii
         let history = JSON.parse(localStorage.getItem("wheelHistory") || "[]");
         history.push({prize: selectedPrize, time: new Date().toLocaleString()});
         localStorage.setItem("wheelHistory", JSON.stringify(history));
