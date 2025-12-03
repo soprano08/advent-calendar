@@ -14,8 +14,8 @@
     }
 
     #wheel {
-        width: 450px;
-        height: 450px;
+        width: 500px;
+        height: 500px;
         border-radius: 50%;
         border: 10px solid #333;
         margin: 0 auto;
@@ -24,7 +24,6 @@
         transition: transform 5s ease-out;
     }
 
-    /* ====== 8 POL ======= */
     .slice {
         position: absolute;
         width: 50%;
@@ -37,14 +36,12 @@
         align-items: center;
         justify-content: center;
         font-weight: bold;
-        font-size: 17px;
-        padding: 5px;
-        text-align: center;
+        font-size: 18px;
         box-sizing: border-box;
-        background: #ffd966;
+        padding: 0;
     }
 
-    /* każdemu polu nadajemy osobny kolor i obrót co 45° */
+    /* 8 pól, każde obrót co 45° */
     .slice:nth-child(1)  { transform: rotate(0deg);   background:#ffd966; }
     .slice:nth-child(2)  { transform: rotate(45deg);  background:#ff6961; }
     .slice:nth-child(3)  { transform: rotate(90deg);  background:#77dd77; }
@@ -54,11 +51,12 @@
     .slice:nth-child(7)  { transform: rotate(270deg); background:#f4a460; }
     .slice:nth-child(8)  { transform: rotate(315deg); background:#a0e7e5; }
 
-    /* >>> klucz: tekst prostujemy <<< */
+    /* 💥 KLUCZ: pionowy tekst, zawsze czytelny */
     .slice span {
-        transform: rotate(-45deg);
-        display: block;
-        width: 100px;
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        text-align: center;
+        font-size: 18px;
     }
 
     /* pointer */
@@ -80,11 +78,6 @@
         font-size: 20px;
         border-radius: 12px;
         cursor: pointer;
-    }
-    
-    button:disabled {
-        background: #777;
-        cursor: not-allowed;
     }
 
     #result {
@@ -116,18 +109,6 @@
 <div id="result"></div>
 
 <script>
-    const spinBtn = document.getElementById("spinBtn");
-    const result = document.getElementById("result");
-
-    let lastSpin = localStorage.getItem("lastSpinDate");
-    let today = new Date().toDateString();
-
-    if (lastSpin === today) {
-        spinBtn.disabled = true;
-        result.textContent = "Możesz zakręcić jutro ❄️";
-    }
-
-    // *** PRZYPISANE NAGRODY DLA REALNYCH POL ***
     const prizes = [
         "Filmik językowy",
         "Penis w całości",
@@ -142,31 +123,22 @@
     function spin() {
         const wheel = document.getElementById("wheel");
 
-        // 3600 = 10 obrotów żeby wyglądało ładnie
+        // losujemy obrót
         let random = Math.floor(Math.random() * 360 + 3600);
-
         wheel.style.transform = "rotate(" + random + "deg)";
 
         setTimeout(() => {
-            // oblicz realną pozycję
             let deg = random % 360;
-
-            // każde pole ma 45°
             let index = Math.floor((360 - deg) / 45) % 8;
 
             let prize = prizes[index];
 
-            // blokujemy penisa w losowaniu
+            // blokada penisa do 0% szans
             if (prize === "Penis w całości") {
-                prize = "Nic nie wypadło, spróbuj jutro 😈";
+                prize = "Nic nie wypadło, spróbuj jeszcze raz 😈";
             }
 
-            result.innerHTML = "Wylosowano: " + prize;
-
-            // blokada na dziś
-            localStorage.setItem("lastSpinDate", today);
-            spinBtn.disabled = true;
-
+            document.getElementById("result").innerHTML = "Wylosowano: <b>" + prize + "</b>";
         }, 5200);
     }
 </script>
