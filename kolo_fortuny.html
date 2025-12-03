@@ -28,20 +28,9 @@ body {
     top: 50%;
     left: 50%;
     transform-origin: 0% 0%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-/* TEKST W PIONIE */
-.slice span {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-size: 18px;
-    font-weight: bold;
-    pointer-events: none;
-}
-
+/* wskaźnik */
 #pointer {
     width: 0;
     height: 0;
@@ -49,6 +38,22 @@ body {
     border-right: 25px solid transparent;
     border-bottom: 40px solid red;
     margin: 0 auto;
+    margin-bottom: 20px;
+}
+
+/* kolor + nagroda */
+#resultBox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+#colorBox {
+    width: 50px;
+    height: 50px;
+    border: 2px solid #333;
 }
 </style>
 
@@ -63,13 +68,15 @@ body {
 
 <button id="spinBtn">Zakręć</button>
 
-<p id="result"></p>
+<div id="resultBox">
+    <div id="colorBox"></div>
+    <p id="result"></p>
+</div>
 
 <script>
 let canSpin = true;
 
-// NAGRODY
-// Uwaga: "Penis w całości" MA 0% SZANS — nie będzie w tablicy losowania
+// NAGRODY I KOLORY
 let prizes = [
     "Dresy",
     "Gatki z niespodzianką",
@@ -78,47 +85,45 @@ let prizes = [
     "Klata na życzenie",
     "Dłonie na życzenie",
     "Trochę głosówek",
-    "Penis w całości"  // jest na kole wizualnie, ale nie w losowaniu
+    "Penis w całości"  // wizualnie na kole
 ];
 
-// KOLORY
 let colors = ["#ff6", "#6ff", "#99f", "#f96", "#9f9", "#6cf", "#fc9", "#cff"];
 
 let wheel = document.getElementById("wheel");
 let sliceCount = prizes.length;
 let angleStep = 360 / sliceCount;
 
-
-// RENDEROWANIE SEKCJI
+// TWORZENIE KOŁA Z SAMYMI KOLORAMI
 for (let i = 0; i < sliceCount; i++) {
     let slice = document.createElement("div");
     slice.className = "slice";
     slice.style.background = colors[i % colors.length];
     slice.style.transform = `rotate(${i * angleStep}deg) skewY(${90 - angleStep}deg)`;
-    slice.innerHTML = `<span>${prizes[i]}</span>`;
     wheel.appendChild(slice);
 }
 
-
 document.getElementById("spinBtn").onclick = function() {
     if (!canSpin) return;
-    canSpin = true;
+    canSpin = false;
 
-    // losujemy BEZ penisa
+    // losowanie bez "Penis w całości"
     let safePrizes = prizes.filter(p => p !== "Penis w całości");
-    let selected = safePrizes[Math.floor(Math.random() * safePrizes.length)];
+    let selectedIndex = Math.floor(Math.random() * safePrizes.length);
+    let selectedPrize = safePrizes[selectedIndex];
+    let selectedColor = colors[selectedIndex];
 
+    // losowanie obrotu koła
     let randomDeg = 3600 + Math.random() * 360;
-
     wheel.style.transition = "transform 4s ease-out";
     wheel.style.transform = `rotate(${randomDeg}deg)`;
 
     document.getElementById("result").innerHTML = "Losuję...";
+    document.getElementById("colorBox").style.background = "#fff";
 
     setTimeout(() => {
-        document.getElementById("result").innerHTML = "Wylosowano: " + selected;
-        document.getElementById("spinBtn").disabled = true;
-        canSpin = false;
+        document.getElementById("result").innerHTML = selectedPrize;
+        document.getElementById("colorBox").style.background = selectedColor;
     }, 4000);
 };
 </script>
