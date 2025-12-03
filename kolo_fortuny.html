@@ -9,6 +9,16 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     background: #eee;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 20px;
+}
+
+#wheelContainer {
+    position: relative;
 }
 
 #wheel {
@@ -17,7 +27,6 @@ body {
     height: 500px;
     border: 10px solid #333;
     border-radius: 50%;
-    margin: 40px auto;
     overflow: hidden;
 }
 
@@ -30,13 +39,13 @@ body {
     transform-origin: 0% 0%;
 }
 
-/* wskaźnik */
+/* wskaźnik DO DOŁU */
 #pointer {
     width: 0;
     height: 0;
     border-left: 25px solid transparent;
     border-right: 25px solid transparent;
-    border-bottom: 40px solid red;
+    border-top: 40px solid red; /* zamiast border-bottom */
     margin: 0 auto;
     margin-bottom: 20px;
 }
@@ -55,22 +64,39 @@ body {
     height: 50px;
     border: 2px solid #333;
 }
+
+/* legenda po boku */
+#legend {
+    text-align: left;
+}
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    gap: 8px;
+}
+.color-square {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #333;
+}
 </style>
 
 </head>
 <body>
 
-<h2>Zakolej szczęścia 😎</h2>
+<div id="wheelContainer">
+    <div id="pointer"></div>
+    <div id="wheel"></div>
+    <button id="spinBtn">Zakręć</button>
+    <div id="resultBox">
+        <div id="colorBox"></div>
+        <p id="result"></p>
+    </div>
+</div>
 
-<div id="pointer"></div>
-
-<div id="wheel"></div>
-
-<button id="spinBtn">Zakręć</button>
-
-<div id="resultBox">
-    <div id="colorBox"></div>
-    <p id="result"></p>
+<div id="legend">
+    <h3>Legenda kolorów:</h3>
 </div>
 
 <script>
@@ -101,6 +127,15 @@ for (let i = 0; i < sliceCount; i++) {
     slice.style.background = colors[i % colors.length];
     slice.style.transform = `rotate(${i * angleStep}deg) skewY(${90 - angleStep}deg)`;
     wheel.appendChild(slice);
+}
+
+// TWORZENIE LEGENDY
+let legend = document.getElementById("legend");
+for (let i = 0; i < prizes.length; i++) {
+    let item = document.createElement("div");
+    item.className = "legend-item";
+    item.innerHTML = `<div class="color-square" style="background:${colors[i]}"></div> ${prizes[i]}`;
+    legend.appendChild(item);
 }
 
 document.getElementById("spinBtn").onclick = function() {
