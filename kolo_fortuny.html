@@ -89,15 +89,19 @@ for (let i = 0; i < numSlices; i++) {
     slice.style.transform = `rotate(${i * angle}deg) skewY(${90 - angle}deg)`;
     slice.style.background = `hsl(${i * 45}, 70%, 70%)`;
 
-    // numer na każdym polu
+    // numer na każdym polu, wyliczony po środku segmentu
     const label = document.createElement("div");
     label.style.position = "absolute";
-    label.style.top = "-90%";
-    label.style.left = "-10%";
     label.style.fontSize = "24px";
     label.style.fontWeight = "bold";
-    label.style.transform = `skewY(-${90 - angle}deg) rotate(${angle / 2}deg)`;
-    label.textContent = i + 1; // numer od 1 do 8
+
+    const rad = ((i * angle) + angle / 2) * (Math.PI / 180);
+    const r = 120; // promień od środka koła do numerka
+    label.style.left = `${50 + (r/200) * Math.cos(rad) * 50}%`;
+    label.style.top = `${50 + (r/200) * Math.sin(rad) * 50}%`;
+    label.style.transform = "translate(-50%, -50%)";
+
+    label.textContent = i + 1;
 
     slice.appendChild(label);
     wheel.appendChild(slice);
@@ -138,3 +142,4 @@ btn.onclick = function () {
 
 </body>
 </html>
+
