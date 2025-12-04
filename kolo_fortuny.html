@@ -71,7 +71,7 @@
     <p>5: Nagroda 5</p>
     <p>6: Nagroda 6</p>
     <p>7: Nagroda 7</p>
-    <p>8: Nagroda 8</p>
+    <p>8: Nie do wylosowania</p>
 </div>
 
 <script>
@@ -81,7 +81,7 @@ const btn = document.getElementById("spinBtn");
 const numSlices = 8;
 const angle = 360 / numSlices;
 
-// Tworzenie segmentów koła
+// Tworzenie segmentów koła z numerkami od 1 do 8
 for (let i = 0; i < numSlices; i++) {
     const slice = document.createElement("div");
     slice.className = "slice";
@@ -97,7 +97,7 @@ for (let i = 0; i < numSlices; i++) {
     label.style.fontSize = "24px";
     label.style.fontWeight = "bold";
     label.style.transform = `skewY(-${90 - angle}deg) rotate(${angle / 2}deg)`;
-    label.textContent = i + 1;
+    label.textContent = i + 1; // numer od 1 do 8
 
     slice.appendChild(label);
     wheel.appendChild(slice);
@@ -105,8 +105,19 @@ for (let i = 0; i < numSlices; i++) {
 
 let currentRotation = 0;
 
+// Sprawdzenie localStorage, jeśli już wcześniej losowano
+let savedResult = localStorage.getItem("wheelResultNumber");
+if (savedResult) {
+    btn.disabled = true;
+    const sliceAngle = 360 / numSlices;
+    const targetAngle = (savedResult - 1) * sliceAngle + (sliceAngle / 2);
+    const extraTurns = 5 * 360;
+    const finalRotation = extraTurns - targetAngle;
+    wheel.style.transform = `rotate(${finalRotation}deg)`;
+}
+
 btn.onclick = function () {
-    // WYKLUCZONE POLE 8 — REALNIE NIE MOŻE BYĆ WYLOSOWANE
+    // WYKLUCZONE POLE 8 — NIE MOŻE BYĆ WYLOSOWANE
     const allowed = [1,2,3,4,5,6,7];
     const chosen = allowed[Math.floor(Math.random() * allowed.length)];
 
@@ -117,8 +128,11 @@ btn.onclick = function () {
     const finalRotation = extraTurns - targetAngle;
 
     currentRotation = finalRotation;
-
     wheel.style.transform = `rotate(${finalRotation}deg)`;
+
+    // blokada przycisku i zapis wyniku
+    btn.disabled = true;
+    localStorage.setItem("wheelResultNumber", chosen);
 };
 </script>
 
