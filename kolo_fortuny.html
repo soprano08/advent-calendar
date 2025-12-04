@@ -29,17 +29,16 @@
         top: 50%;
         left: 50%;
         transform-origin: 0% 0%;
-        background: #eee;
         border: 1px solid #ccc;
     }
 
     #arrow {
-        width: 0; 
-        height: 0; 
+        width: 0;
+        height: 0;
+        margin: 0 auto 20px;
         border-left: 20px solid transparent;
         border-right: 20px solid transparent;
-        border-bottom: 35px solid red;
-        margin: 0 auto 20px;
+        border-top: 35px solid red; /* strzałka w dół */
     }
 
     #spinBtn {
@@ -72,7 +71,7 @@
     <p>5: Nagroda 5</p>
     <p>6: Nagroda 6</p>
     <p>7: Nagroda 7</p>
-    <p>8: Nagroda 8 (niewylosowalna)</p>
+    <p>8: Nagroda 8</p>
 </div>
 
 <script>
@@ -86,26 +85,34 @@ const angle = 360 / numSlices;
 for (let i = 0; i < numSlices; i++) {
     const slice = document.createElement("div");
     slice.className = "slice";
+
     slice.style.transform = `rotate(${i * angle}deg) skewY(${90 - angle}deg)`;
     slice.style.background = `hsl(${i * 45}, 70%, 70%)`;
-    slice.innerHTML = `<div style="transform: skewY(-${90 - angle}deg) rotate(${angle/2}deg); 
-                        position:absolute; top:-100%; left:-10%; font-weight:bold;">
-                        ${i+1}</div>`;
+
+    // numer na każdym polu
+    const label = document.createElement("div");
+    label.style.position = "absolute";
+    label.style.top = "-90%";
+    label.style.left = "-10%";
+    label.style.fontSize = "24px";
+    label.style.fontWeight = "bold";
+    label.style.transform = `skewY(-${90 - angle}deg) rotate(${angle / 2}deg)`;
+    label.textContent = i + 1;
+
+    slice.appendChild(label);
     wheel.appendChild(slice);
 }
 
 let currentRotation = 0;
 
 btn.onclick = function () {
-    // WYKLUCZENIE POLA 8
-    const allowed = [1,2,3,4,5,6,7]; 
+    // WYKLUCZONE POLE 8 — REALNIE NIE MOŻE BYĆ WYLOSOWANE
+    const allowed = [1,2,3,4,5,6,7];
     const chosen = allowed[Math.floor(Math.random() * allowed.length)];
 
-    // Obliczenie docelowego kąta
     const sliceAngle = 360 / numSlices;
     const targetAngle = (chosen - 1) * sliceAngle + (sliceAngle / 2);
 
-    // Dodanie pełnych obrotów dla animacji
     const extraTurns = 5 * 360;
     const finalRotation = extraTurns - targetAngle;
 
