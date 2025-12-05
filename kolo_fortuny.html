@@ -2,21 +2,60 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Koło Fortuny</title>
-<link rel="stylesheet" href="kolo_fortuny.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Winwheel.js/2.7.0/Winwheel.min.js"></script>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #071022;
+    color: #e6eef8;
+    text-align: center;
+    padding: 20px;
+  }
+
+  h1 {
+    margin-bottom: 20px;
+  }
+
+  iframe {
+    border: 4px solid #06b6d4;
+    border-radius: 12px;
+    width: 500px;
+    height: 500px;
+  }
+
+  .legend {
+    margin-top: 30px;
+    text-align: left;
+    display: inline-block;
+    font-size: 16px;
+  }
+
+  .legend h2 {
+    margin-bottom: 10px;
+  }
+</style>
 </head>
 <body>
 
 <h1>Koło Fortuny</h1>
 
-<canvas id="wheelcanvas" width="500" height="500"></canvas>
-<button id="spinBtn">Zakręć</button>
+<!-- Koło -->
+<iframe src="https://wheelofnames.com/ahq-mpc"
+        frameborder="0" scrolling="no"></iframe>
 
-<div id="result"></div>
-
-<script src="kolo_fortuny.js"></script>
+<!-- Legenda -->
+<div class="legend">
+  <h2>Nagrody</h2>
+  1. ..................................................<br>
+  2. ..................................................<br>
+  3. ..................................................<br>
+  4. ..................................................<br>
+  5. ..................................................<br>
+  6. ..................................................<br>
+  7. ..................................................<br>
+  8. ..................................................<br>
+</div>
 
 </body>
 </html>
