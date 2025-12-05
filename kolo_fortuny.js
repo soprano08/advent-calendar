@@ -30,4 +30,3 @@ fetch('mojekolo.wheel')
   .catch(err => {
     console.error("Nie udało się wczytać pliku mojekolo.wheel:", err);
   });
-
