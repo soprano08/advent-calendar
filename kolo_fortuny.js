@@ -1,31 +1,31 @@
-// 🔥 Pola które mogą się wylosować (bez 5)
-const availableNumbers = [1, 2, 3, 4, 6, 7, 8];
+// Tworzymy koło z 8 równymi polami ale 5 ma 0% szans
+let theWheel = new Winwheel({
+    numSegments: 8,
+    outerRadius: 230,
+    textFontSize: 24,
+    segments: [
+        { text: "1", weight: 1 },
+        { text: "2", weight: 1 },
+        { text: "3", weight: 1 },
+        { text: "4", weight: 1 },
+        { text: "5", weight: 0 },  // ZERO SZANS
+        { text: "6", weight: 1 },
+        { text: "7", weight: 1 },
+        { text: "8", weight: 1 }
+    ],
+    animation: {
+        type: "spinToStop",
+        duration: 5,
+        spins: 8,
+        callbackFinished: showResult
+    }
+});
 
-const spinBtn = document.getElementById("spinBtn");
-const resultEl = document.getElementById("result");
-
-// Sprawdź czy już losował (localStorage)
-if (localStorage.getItem("wheelUsed") === "true") {
-    spinBtn.disabled = true;
-    resultEl.textContent = "Wynik: " + localStorage.getItem("wheelResult");
+function showResult(indicatedSegment) {
+    document.getElementById("result").innerHTML =
+        "Wylosowano: " + indicatedSegment.text;
 }
 
-spinBtn.addEventListener("click", () => {
-
-    // Jak już losował, blokujemy
-    if (localStorage.getItem("wheelUsed") === "true") return;
-
-    // 👉 LOSOWANIE BEZ 5
-    const randomIndex = Math.floor(Math.random() * availableNumbers.length);
-    const result = availableNumbers[randomIndex];
-
-    // 👉 zapis do localStorage (pamięta nawet po odświeżeniu strony)
-    localStorage.setItem("wheelUsed", "true");
-    localStorage.setItem("wheelResult", result);
-
-    // 👉 pokazanie wyniku
-    resultEl.textContent = "Wynik: " + result;
-
-    // 👉 blokada przycisku
-    spinBtn.disabled = true;
+document.getElementById("spinBtn").addEventListener("click", () => {
+    theWheel.startAnimation();
 });
