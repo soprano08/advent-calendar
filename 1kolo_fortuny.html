@@ -1,148 +1,159 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Koło Fortuny (8 pól)</title>
-  <style>
-    :root{--size:420px}
-    body{font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0f172a;color:#e6eef8;margin:0}
-    .wrap{display:flex;flex-direction:column;align-items:center;gap:18px}
-    .wheel-wrap{position:relative;width:var(--size);height:var(--size)}
-    /* strzałka u góry */
-    .pointer{position:absolute;left:50%;transform:translateX(-50%);top:-28px;width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-bottom:28px solid #ffde59;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35));z-index:20}
-    .wheel{width:100%;height:100%;border-radius:50%;overflow:visible;display:block;box-shadow:0 10px 30px rgba(2,6,23,.6);transition:transform 4s cubic-bezier(.08,.9,.28,1);}
-    .center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:90px;height:90px;border-radius:50%;background:linear-gradient(180deg,#111827,#0b1220);display:flex;align-items:center;justify-content:center;border:6px solid rgba(255,255,255,.06);z-index:15}
-    button{background:#06b6d4;border:none;padding:12px 20px;border-radius:10px;color:#042029;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(6,182,212,.12)}
-    button:active{transform:translateY(2px)}
-    .result{margin-top:6px;font-weight:700}
-    /* poukrywaj obrazki przy małych ekranach */
-    @media (max-width:480px){:root{--size:320px}.pointer{top:-22px;border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:22px solid #ffde59}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Koło fortuny</title>
+
+<style>
+body{
+  font-family:sans-serif;
+  background:#111827;
+  color:white;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+  margin:0;
+}
+
+#wrapper{
+  position:relative;
+  width:350px;
+  height:350px;
+  margin-bottom:20px;
+}
+
+/* STRZAŁKA U GÓRY WSKAZUJĄCA W DÓŁ */
+#arrow{
+  position:absolute;
+  left:50%;
+  top:-25px;
+  transform:translateX(-50%);
+  width:0;
+  height:0;
+  border-left:20px solid transparent;
+  border-right:20px solid transparent;
+  border-bottom:35px solid #ffd700;
+  z-index:10;
+}
+
+#wheel{
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  transition:transform 3.5s cubic-bezier(.2,.9,.3,1);
+}
+
+button{
+  padding:10px 20px;
+  border:none;
+  border-radius:8px;
+  background:#22d3ee;
+  color:#022c3a;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+#result{
+  margin-top:15px;
+  font-size:20px;
+  font-weight:bold;
+}
+</style>
+
 </head>
 <body>
-  <div class="wrap">
-    <h2 style="margin:0">Koło fortuny — 8 pól</h2>
-    <div class="wheel-wrap">
-      <div class="pointer" title="Wskaźnik"></div>
-      <!-- svg wheel is rotated by JS on .wheel -->
-      <svg class="wheel" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" id="wheel">
-        <!-- we'll draw 8 slices with JS-friendly ids -->
-        <g id="slices" transform="translate(250,250)"></g>
-      </svg>
-      <div class="center" id="center">SPIN</div>
-    </div>
 
-    <div style="display:flex;gap:12px;align-items:center">
-      <button id="spinBtn">Zakręć</button>
-      <div class="result" id="result">Wynik: —</div>
-    </div>
-    <small style="opacity:.7">Koło podzielone na 8 pól (1–8). Kliknij "Zakręć" aby losować.</small>
-  </div>
+<h2>Koło fortuny – 8 pól</h2>
 
-  <script>
-    (function(){
-      const SEGMENTS = 8;
-      const SIZE = 500; // svg viewBox
-      const R = 230; // radius
-      const colors = ['#f97316','#fb7185','#60a5fa','#34d399','#f59e0b','#a78bfa','#f43f5e','#10b981'];
-      const g = document.getElementById('slices');
+<div id="wrapper">
+  <div id="arrow"></div>
 
-      // draw slices and numbers, starting from top and going clockwise
-      const sliceAngle = 360/SEGMENTS;
-      for(let i=0;i<SEGMENTS;i++){
-        const start = (i*sliceAngle - 90) * Math.PI/180; // offset -90 to start at top
-        const end = ((i+1)*sliceAngle - 90) * Math.PI/180;
-        const x1 = Math.cos(start)*R; const y1 = Math.sin(start)*R;
-        const x2 = Math.cos(end)*R; const y2 = Math.sin(end)*R;
-        const large = 0;
-        const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-        const d = `M 0 0 L ${x1} ${y1} A ${R} ${R} 0 ${large} 1 ${x2} ${y2} Z`;
-        path.setAttribute('d',d);
-        path.setAttribute('fill', colors[i % colors.length]);
-        path.setAttribute('stroke','rgba(255,255,255,0.04)');
-        path.setAttribute('id', 'slice-'+(i+1));
-        g.appendChild(path);
+  <!-- SVG KOŁA -->
+  <svg id="wheel" viewBox="0 0 500 500">
+    <g id="segments" transform="translate(250,250)"></g>
+  </svg>
+</div>
 
-        // add number label
-        const angle = (i*sliceAngle + sliceAngle/2 - 90) * Math.PI/180;
-        const lx = Math.cos(angle)*(R*0.6);
-        const ly = Math.sin(angle)*(R*0.6);
-        const text = document.createElementNS('http://www.w3.org/2000/svg','text');
-        text.setAttribute('x', lx);
-        text.setAttribute('y', ly + 6); // small vertical adjustment
-        text.setAttribute('text-anchor','middle');
-        text.setAttribute('font-size','32');
-        text.setAttribute('font-weight','700');
-        text.setAttribute('fill','#061826');
-        text.textContent = (i+1).toString();
-        g.appendChild(text);
-      }
+<button id="spin">Zakręć</button>
+<div id="result">Wynik: —</div>
 
-      const wheel = document.getElementById('wheel');
-      const spinBtn = document.getElementById('spinBtn');
-      const resultEl = document.getElementById('result');
-      const center = document.getElementById('center');
 
-      // Make center button clickable too
-      center.style.cursor = 'pointer';
-      center.addEventListener('click', triggerSpin);
-      spinBtn.addEventListener('click', triggerSpin);
+<script>
+/* ---- KONFIG ---- */
+const SEGMENTS = 8;
+const R = 230;
+const sliceAngle = 360 / SEGMENTS;
+const colors = ["#ff6b6b","#4ecdc4","#ffe66d","#1a535c","#f7fff7","#ff9f1c","#2ec4b6","#e71d36"];
 
-      let spinning = false;
+/* ---- RYSOWANIE KOŁA ---- */
+const g = document.getElementById("segments");
 
-      function triggerSpin(){
-        if(spinning) return;
-        spinning = true;
-        resultEl.textContent = 'Wynik: ...';
+for(let i=0;i<SEGMENTS;i++){
+  const start = (i*sliceAngle - 90) * Math.PI/180;
+  const end   = ((i+1)*sliceAngle - 90) * Math.PI/180;
 
-        // choose random segment 0..7
-        const chosen = Math.floor(Math.random()*SEGMENTS); // 0..7
+  const x1 = Math.cos(start)*R;
+  const y1 = Math.sin(start)*R;
+  const x2 = Math.cos(end)*R;
+  const y2 = Math.sin(end)*R;
 
-        // We want the wheel to stop so that segment (chosen+1) is at top (aligned with arrow)
-        // If segment indices start at top at 0, target angle (deg) to rotate = chosen * sliceAngle
-        // Choose random full spins between 3 and 6 for flair
-        const fullSpins = Math.floor(Math.random()*3)+4; // 4..6
-        // add a small random offset so it doesn't always stop at exact boundary
-        const jitter = (Math.random()* (sliceAngle - 6)) - (sliceAngle/2 - 3); // small - around center of segment
-        const targetAngle = fullSpins*360 + chosen*sliceAngle + jitter;
+  const p = document.createElementNS("http://www.w3.org/2000/svg","path");
+  p.setAttribute("d",`M0 0 L ${x1} ${y1} A ${R} ${R} 0 0 1 ${x2} ${y2} Z`);
+  p.setAttribute("fill",colors[i]);
+  g.appendChild(p);
 
-        // set transition duration proportional to spins
-        const duration = 3 + fullSpins*0.2; // seconds
-        wheel.style.transition = `transform ${duration}s cubic-bezier(.08,.9,.28,1)`;
-        wheel.style.transform = `rotate(${targetAngle}deg)`;
+  const a  = (i*sliceAngle + sliceAngle/2 -90) * Math.PI/180;
+  const tx = Math.cos(a)*(R*0.55);
+  const ty = Math.sin(a)*(R*0.55);
 
-        // when transition ends, compute which segment is at top exactly and show
-        const onEnd = () => {
-          wheel.removeEventListener('transitionend', onEnd);
-          // normalize angle
-          const final = targetAngle % 360;
-          // compute index
-          const idx = Math.floor(final / sliceAngle) % SEGMENTS; // 0..7
-          const display = idx + 1;
-          resultEl.textContent = 'Wynik: ' + display;
+  const t = document.createElementNS("http://www.w3.org/2000/svg","text");
+  t.setAttribute("x",tx);
+  t.setAttribute("y",ty);
+  t.setAttribute("text-anchor","middle");
+  t.setAttribute("font-size","30");
+  t.setAttribute("font-weight","bold");
+  t.setAttribute("fill","#000");
+  t.textContent = i+1;
+  g.appendChild(t);
+}
 
-          // highlight the winning slice briefly
-          highlight(display);
+/* ---- LOSOWANIE I OBRÓT ---- */
+const wheel = document.getElementById("wheel");
+const result = document.getElementById("result");
+const btn = document.getElementById("spin");
 
-          spinning = false;
-        };
-        wheel.addEventListener('transitionend', onEnd);
-      }
+let spinning = false;
+let currentRotation = 0;
 
-      function highlight(number){
-        const id = 'slice-'+number;
-        const el = document.getElementById(id);
-        if(!el) return;
-        const old = el.getAttribute('fill');
-        el.setAttribute('fill','#fff7cc');
-        setTimeout(()=>el.setAttribute('fill', old),1400);
-      }
+btn.onclick = () => {
+  if(spinning) return;
+  spinning = true;
 
-      // reset transform on reload (so it starts from 0)
-      window.addEventListener('load', ()=>{wheel.style.transform = 'rotate(0deg)'});
+  // losowy segment
+  const chosen = Math.floor(Math.random()*SEGMENTS);
 
-    })();
-  </script>
+  // dodatkowe obroty
+  const spins = 4 + Math.random()*3;
+  const target = spins*360 + chosen*sliceAngle;
+
+  currentRotation = (currentRotation + target) % 360;
+  wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+  wheel.ontransitionend = () => {
+    // KONWERSJA na numer segmentu pod strzałką:
+    const final = (currentRotation % 360 + 360) % 360;
+    const index = Math.floor((final + sliceAngle/2) / sliceAngle) % SEGMENTS;
+    const number = index + 1;
+
+    result.textContent = "Wynik: " + number;
+    spinning = false;
+  };
+};
+</script>
+
 </body>
 </html>
+
