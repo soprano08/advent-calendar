@@ -112,20 +112,23 @@ const wheel = document.getElementById("wheelFrame");
 
 // Pobierz dzisiejszą datę
 const today = new Date().toISOString().slice(0,10);
-const lastAccepted = localStorage.getItem("lastAccepted");
 
-// Jeśli już kliknięto dziś → przycisk zablokowany
+// Odblokowany przycisk – zawsze aktywny przy wejściu
+acceptBtn.disabled = false;
+
+// Jeśli lokalStorage ma dzisiejszą datę → blokujemy przycisk
+const lastAccepted = localStorage.getItem("lastAccepted");
 if(lastAccepted === today){
     acceptBtn.disabled = true;
 }
 
 // Obsługa kliknięcia AKCEPTUJ
 acceptBtn.addEventListener("click", () => {
-    // Zapisz datę w localStorage
+    // Zapisz dzisiejszą datę
     localStorage.setItem("lastAccepted", today);
     // Zablokuj przycisk
     acceptBtn.disabled = true;
-    // Koło jest już widoczne (modal zostaje widoczny)
+    // Koło jest widoczne
     wheel.style.display = "block";
 });
 </script>
