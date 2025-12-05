@@ -45,15 +45,18 @@
     spinning = true;
     resultEl.textContent = 'Wynik: ...';
 
-    // Lista dostępnych segmentów bez 5
+    // lista dostępnych segmentów bez 5
     const allowed = [0,1,2,3,5,6,7];
     const chosen = allowed[Math.floor(Math.random()*allowed.length)];
 
-    // Liczba pełnych obrotów
     const full = 3 + Math.floor(Math.random()*4);
 
-    // Rotacja do środka wybranego segmentu (bez jittera!)
-    const target = full*360 + chosen*sliceAngle + sliceAngle/2;
+    // losowy jitter, ale upewniamy się, że nie wyląduje na zakazanym segmencie
+    const maxJitter = sliceAngle * 0.4; // ±40% kąta segmentu
+    const jitter = (Math.random()*2 - 1) * maxJitter;
+
+    // rotacja do środka segmentu + jitter
+    const target = full*360 + chosen*sliceAngle + sliceAngle/2 + jitter;
 
     rotation = (rotation + target) % 360;
     wheel.style.transition = `transform 3.8s cubic-bezier(.08,.9,.28,1)`;
@@ -75,6 +78,8 @@
     let bestDist = Infinity;
 
     labels.forEach(l => {
+      const number = parseInt(l.textContent.trim(),10);
+      if(number === 5) return; // ignorujemy zakazany segment
       const r = l.getBoundingClientRect();
       const centerY = r.top + r.height/2;
       const dist = Math.abs(centerY - targetY);
