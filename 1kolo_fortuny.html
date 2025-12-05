@@ -15,25 +15,24 @@
         padding: 20px;
     }
 
-    .wheel-wrapper {
+    .wheel-container {
         position: relative;
         width: 300px;
         height: 300px;
         margin: 40px auto;
     }
 
-    /* STRZAŁKA – u góry, skierowana w dół */
+    /* STRZAŁKA — U GÓRY, W DÓŁ */
     .arrow {
         position: absolute;
-        top: -30px;
+        top: -28px;
         left: 50%;
         transform: translateX(-50%);
         width: 0;
         height: 0;
-        border-left: 20px solid transparent;
-        border-right: 20px solid transparent;
-        border-top: none;
-        border-bottom: 30px solid red; /* DÓŁ = wskazuje w dół */
+        border-left: 22px solid transparent;
+        border-right: 22px solid transparent;
+        border-bottom: 32px solid red; /* W DÓŁ */
         z-index: 10;
     }
 
@@ -43,29 +42,29 @@
         transform-origin: 50% 50%;
     }
 
-    .spin-btn {
+    button {
         margin-top: 25px;
-        padding: 10px 25px;
+        padding: 12px 30px;
         font-size: 18px;
         cursor: pointer;
         border: none;
         border-radius: 10px;
-        background: #ff4444;
+        background: #e63946;
         color: white;
         transition: 0.2s;
     }
 
-    .spin-btn:hover {
-        background: #ff7777;
+    button:hover {
+        background: #ff6b6b;
     }
 
     /* LEGENDA */
     .legend {
-        max-width: 350px;
-        margin: 40px auto 0;
+        max-width: 360px;
+        margin: 45px auto 0;
         text-align: left;
         background: #333;
-        padding: 15px;
+        padding: 18px;
         border-radius: 10px;
         font-size: 16px;
         line-height: 1.6em;
@@ -78,17 +77,17 @@
     }
 
 </style>
-
 </head>
 <body>
 
 <h1>Koło Fortuny</h1>
 
-<div class="wheel-wrapper">
+<div class="wheel-container">
     <div class="arrow"></div>
 
     <svg id="wheel" viewBox="0 0 100 100">
-        <!-- 8 pól po 45° -->
+
+        <!-- 8 pól -->
         <g>
             <path d="M50 50 L50 0 A50 50 0 0 1 85.36 14.64 Z" fill="#ff3333"></path>
             <path d="M50 50 L85.36 14.64 A50 50 0 0 1 100 50 Z" fill="#ff8800"></path>
@@ -99,7 +98,7 @@
             <path d="M50 50 L0 50 A50 50 0 0 1 14.64 14.64 Z" fill="#8800ff"></path>
             <path d="M50 50 L14.64 14.64 A50 50 0 0 1 50 0 Z" fill="#ff00aa"></path>
 
-            <!-- NUMERY 1–8 -->
+            <!-- NUMERY -->
             <text x="62" y="22" font-size="10" fill="#000">1</text>
             <text x="82" y="38" font-size="10" fill="#000">2</text>
             <text x="82" y="65" font-size="10" fill="#000">3</text>
@@ -109,43 +108,43 @@
             <text x="18" y="38" font-size="10" fill="#000">7</text>
             <text x="38" y="22" font-size="10" fill="#000">8</text>
         </g>
+
     </svg>
 </div>
 
-<button class="spin-btn" id="spin">Zakręć</button>
+<button id="spin">Zakręć</button>
 
-<!-- LEGENDA (do uzupełnienia) -->
+<!-- 🔥 LEGENDA – wpiszesz nagrody sam -->
 <div class="legend">
     <h2>Nagrody</h2>
-
-    1. ..........................................<br>
-    2. ..........................................<br>
-    3. ..........................................<br>
-    4. ..........................................<br>
-    5. ..........................................<br>
-    6. ..........................................<br>
-    7. ..........................................<br>
-    8. ..........................................<br>
+    1. ..............................................<br>
+    2. ..............................................<br>
+    3. ..............................................<br>
+    4. ..............................................<br>
+    5. ..............................................<br>
+    6. ..............................................<br>
+    7. ..............................................<br>
+    8. ..............................................<br>
 </div>
 
 <script>
     const wheel = document.getElementById("wheel");
-    const spinBtn = document.getElementById("spin");
+    const btn = document.getElementById("spin");
 
     let rotation = 0;
     const SLICE = 360 / 8;
 
-    spinBtn.addEventListener("click", () => {
-        const randomExtra = Math.floor(Math.random() * 360);
-        rotation += 360 * 5 + randomExtra;
+    btn.addEventListener("click", () => {
+        const extra = Math.floor(Math.random() * 360);
+        rotation += 360 * 5 + extra;
 
         wheel.style.transition = "transform 4s ease-out";
         wheel.style.transform = `rotate(${rotation}deg)`;
 
         setTimeout(() => {
             const final = (rotation % 360 + 360) % 360;
-            let index = Math.floor((final + SLICE/2) / SLICE) % 8;
-            let number = index + 1;
+            const index = Math.floor((final + SLICE / 2) / SLICE) % 8;
+            const number = index + 1;
             alert("Wynik: " + number);
         }, 4000);
     });
@@ -153,3 +152,4 @@
 
 </body>
 </html>
+
