@@ -1,44 +1,84 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Koło Fortuny — 8 pól</title>
-<link rel="stylesheet" href="kolo_fortuny.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Koło Fortuny – Spin Wheel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #071022;
+      color: #e6eef8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    h1 { margin-bottom: 20px; }
+
+    #wheel-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+    }
+
+    /* Strzałka wskaźnik */
+    .arrow {
+      position: absolute;
+      left: 50%;
+      top: -20px;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 40px;
+      z-index: 10;
+    }
+
+    #spin {
+      margin-top: 20px;
+      padding: 10px 16px;
+      font-weight: bold;
+      background: #06b6d4;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .legend {
+      margin-top: 30px;
+      background:#0d1826;
+      padding:18px;
+      border-radius:10px;
+      width:320px;
+      font-size:16px;
+      line-height:1.6em;
+    }
+    .legend h2{
+      margin:0 0 10px;
+      font-size:18px;
+      text-align:center;
+    }
+  </style>
 </head>
 <body>
 
 <h1>Koło Fortuny — 8 pól</h1>
 
-<div class="wrap">
-  <div class="wheel-wrap">
-
-    <!-- STRZAŁKA (SVG) - zawsze wskazuje w dół -->
-    <svg class="arrow" viewBox="0 0 44 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <defs>
-        <linearGradient id="g" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0" stop-color="#fff199"/>
-          <stop offset="1" stop-color="#ffd24d"/>
-        </linearGradient>
-      </defs>
-      <polygon points="4,4 40,4 22,32" fill="url(#g)" stroke="#b07f06" stroke-width="1"/>
-    </svg>
-
-    <!-- SVG KOŁA -->
-    <svg id="wheel" class="wheel" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Koło fortuny">
-      <g id="slices" transform="translate(250,250)"></g>
-    </svg>
-
-    <div class="center" id="centerBtn" title="Zakręć">ZAKRĘĆ</div>
-  </div>
-
-  <div style="display:flex;gap:12px;align-items:center">
-    <button id="spinBtn">Zakręć</button>
-    <div class="result" id="result">Wynik: —</div>
-  </div>
+<div id="wheel-container">
+  <!-- Strzałka -->
+  <svg class="arrow" viewBox="0 0 44 36" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="g" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0" stop-color="#fff199"/>
+        <stop offset="1" stop-color="#ffd24d"/>
+      </linearGradient>
+    </defs>
+    <polygon points="4,4 40,4 22,32" fill="url(#g)" stroke="#b07f06" stroke-width="1"/>
+  </svg>
 </div>
 
-<!-- LEGENDA NAGRÓD -->
+<button id="spin">Zakręć</button>
+
+<!-- Legenda -->
 <div class="legend">
   <h2>Nagrody</h2>
   1. ..................................................<br>
@@ -51,6 +91,36 @@
   8. ..................................................<br>
 </div>
 
-<script src="kolo_fortuny.js"></script>
+<!-- Biblioteka spin-wheel -->
+<script src="https://cdn.jsdelivr.net/npm/spin-wheel@5.0.2/dist/spin-wheel-iife.js"></script>
+
+<script>
+  const container = document.getElementById('wheel-container');
+  const items = [
+    { label: '1', weight: 1 },
+    { label: '2', weight: 1 },
+    { label: '3', weight: 1 },
+    { label: '4', weight: 1 },
+    { label: '5', weight: 0 }, // 0% szans
+    { label: '6', weight: 1 },
+    { label: '7', weight: 1 },
+    { label: '8', weight: 1 }
+  ];
+
+  // Inicjalizacja koła
+  const wheel = new Wheel(container, { items, radius: 140 });
+
+  // Przycisk zakręcenia
+  document.getElementById('spin').addEventListener('click', () => {
+    wheel.spin();
+  });
+
+  // Po zatrzymaniu koła
+  wheel.on('rest', (event) => {
+    const number = items[event.currentIndex].label;
+    alert('Wylosowałeś: ' + number);
+  });
+</script>
+
 </body>
 </html>
