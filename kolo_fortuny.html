@@ -23,6 +23,7 @@
     width: 500px;
     height: 500px;
     margin-top: 20px;
+    display: none; /* ukryte dopóki użytkownik nie zaakceptuje */
   }
 
   /* Modal */
@@ -109,17 +110,19 @@
 <script>
 const acceptBtn = document.getElementById("acceptBtn");
 const wheel = document.getElementById("wheelFrame");
+const modal = document.getElementById("modal");
 
 // Pobierz dzisiejszą datę
 const today = new Date().toISOString().slice(0,10);
 
-// Odblokowany przycisk – zawsze aktywny przy wejściu
-acceptBtn.disabled = false;
-
-// Jeśli lokalStorage ma dzisiejszą datę → blokujemy przycisk
+// Sprawdź w localStorage, czy użytkownik już zaakceptował regulamin
 const lastAccepted = localStorage.getItem("lastAccepted");
+
 if(lastAccepted === today){
+    // Użytkownik już zaakceptował → przycisk zablokowany i modal widoczny
     acceptBtn.disabled = true;
+    modal.style.display = "flex"; // cały czas widoczny
+    wheel.style.display = "none";  // koło nadal ukryte
 }
 
 // Obsługa kliknięcia AKCEPTUJ
@@ -128,8 +131,8 @@ acceptBtn.addEventListener("click", () => {
     localStorage.setItem("lastAccepted", today);
     // Zablokuj przycisk
     acceptBtn.disabled = true;
-    // Koło jest widoczne
-    wheel.style.display = "block";
+    // Przekierowanie do strony z kołem
+    window.location.href = window.location.href; // tutaj możesz podać inną stronę, jeśli masz np. separate page
 });
 </script>
 
