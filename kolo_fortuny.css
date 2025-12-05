@@ -1,40 +1,22 @@
 body {
-  background: #071022;
-  color: #e6eef8;
   font-family: Arial, sans-serif;
   text-align: center;
-  padding: 20px;
+  background: #f2f2f2;
 }
 
-iframe {
-  border: 4px solid #06b6d4;
-  border-radius: 12px;
-  margin-bottom: 20px;
+#wheelcanvas {
+  margin-top: 20px;
 }
 
-button {
-  background: #06b6d4;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 10px;
-  color: #022029;
-  font-weight: 800;
+#spinBtn {
+  margin-top: 20px;
+  padding: 15px 30px;
+  font-size: 18px;
   cursor: pointer;
 }
 
-button:disabled {
-  background: #334155;
-  cursor: not-allowed;
-}
-
-.result {
-  margin-top: 15px;
-  font-size: 22px;
+#result {
+  margin-top: 30px;
+  font-size: 24px;
   font-weight: bold;
-}
-
-.legend {
-  margin-top: 40px;
-  text-align: left;
-  display: inline-block;
 }
