@@ -22,7 +22,6 @@
     border-radius: 12px;
     width: 500px;
     height: 500px;
-    display: none; /* ukryte do czasu akceptacji */
     margin-top: 20px;
   }
 
@@ -59,6 +58,11 @@
     background: #06b6d4;
     color: #071022;
     font-weight: bold;
+  }
+
+  #modalContent button:disabled {
+    background: #555;
+    cursor: not-allowed;
   }
 
   .legend {
@@ -103,32 +107,26 @@
 </div>
 
 <script>
-const modal = document.getElementById("modal");
 const acceptBtn = document.getElementById("acceptBtn");
 const wheel = document.getElementById("wheelFrame");
 
-// Sprawdzenie, czy dzisiaj już kliknięto
+// Pobierz dzisiejszą datę
 const today = new Date().toISOString().slice(0,10);
 const lastAccepted = localStorage.getItem("lastAccepted");
 
+// Jeśli już kliknięto dziś → przycisk zablokowany
 if(lastAccepted === today){
-    // Już kliknięto dziś → modal nie pokazuje się, koło widoczne
-    modal.style.display = "none";
-    wheel.style.display = "block";
-} else {
-    // Modal widoczny, koło ukryte
-    modal.style.display = "flex";
-    wheel.style.display = "none";
+    acceptBtn.disabled = true;
 }
 
-// Obsługa przycisku AKCEPTUJ
+// Obsługa kliknięcia AKCEPTUJ
 acceptBtn.addEventListener("click", () => {
-    // Ukryj modal
-    modal.style.display = "none";
-    // Pokaż koło
-    wheel.style.display = "block";
-    // Zapisz dzisiejszą datę
+    // Zapisz datę w localStorage
     localStorage.setItem("lastAccepted", today);
+    // Zablokuj przycisk
+    acceptBtn.disabled = true;
+    // Koło jest już widoczne (modal zostaje widoczny)
+    wheel.style.display = "block";
 });
 </script>
 
