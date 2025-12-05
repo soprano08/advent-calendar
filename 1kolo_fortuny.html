@@ -3,219 +3,54 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Koło fortuny — 8 pól (strzałka na górze wskazuje w dół)</title>
-<style>
-  :root{--size:420px}
-  body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:#071022;color:#e6eef8;min-height:100vh;margin:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;padding:24px}
-  h1{font-size:20px;margin:0}
-  .wrap{width:var(--size);display:flex;flex-direction:column;align-items:center;gap:12px}
-  .wheel-wrap{position:relative;width:var(--size);height:var(--size)}
-  .arrow{
-    position:absolute;
-    left:50%;
-    top:-24px;
-    transform:translateX(-50%);
-    width:44px;
-    height:36px;
-    z-index:30;
-    pointer-events:none;
-  }
-  .wheel{
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    box-shadow:0 12px 30px rgba(2,6,23,.6);
-    transform-origin:50% 50%;
-    transition:transform 3.8s cubic-bezier(.08,.9,.28,1);
-    display:block;
-  }
-  .center{
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-    width:92px;height:92px;border-radius:50%;
-    background:linear-gradient(180deg,#08121a,#021018);
-    display:flex;align-items:center;justify-content:center;font-weight:800;color:#dff3ff;z-index:20;border:6px solid rgba(255,255,255,.04);cursor:pointer;
-  }
-  button{background:#06b6d4;border:none;padding:10px 16px;border-radius:10px;color:#022029;font-weight:800;cursor:pointer}
-  .result{margin-top:6px;font-weight:700}
-  small{opacity:.75}
-  .highlight{
-    filter:brightness(1.15) saturate(1.2);
-    stroke:#ffffff44;
-    stroke-width:2;
-  }
-  @media (max-width:480px){:root{--size:320px}.arrow{top:-20px}}
-
-  /* ⭐ LEGENDA ⭐ */
-  .legend{
-    margin-top:30px;
-    background:#0d1826;
-    padding:18px;
-    border-radius:10px;
-    width:320px;
-    font-size:16px;
-    line-height:1.6em;
-  }
-  .legend h2{
-    margin:0 0 10px;
-    font-size:18px;
-    text-align:center;
-  }
-</style>
+<title>Koło Fortuny — 8 pól</title>
+<link rel="stylesheet" href="kolo_fortuny.css">
 </head>
 <body>
 
-  <h1>Koło fortuny — 8 pól</h1>
+<h1>Koło Fortuny — 8 pól</h1>
 
-  <div class="wrap">
-    <div class="wheel-wrap">
+<div class="wrap">
+  <div class="wheel-wrap">
 
-      <svg class="arrow" viewBox="0 0 44 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <defs>
-          <linearGradient id="g" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0" stop-color="#fff199"/>
-            <stop offset="1" stop-color="#ffd24d"/>
-          </linearGradient>
-        </defs>
-        <polygon points="4,4 40,4 22,32" fill="url(#g)" stroke="#b07f06" stroke-width="1"/>
-      </svg>
+    <!-- STRZAŁKA (SVG) - zawsze wskazuje w dół -->
+    <svg class="arrow" viewBox="0 0 44 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="g" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stop-color="#fff199"/>
+          <stop offset="1" stop-color="#ffd24d"/>
+        </linearGradient>
+      </defs>
+      <polygon points="4,4 40,4 22,32" fill="url(#g)" stroke="#b07f06" stroke-width="1"/>
+    </svg>
 
-      <svg id="wheel" class="wheel" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Koło fortuny">
-        <g id="slices" transform="translate(250,250)"></g>
-      </svg>
+    <!-- SVG KOŁA -->
+    <svg id="wheel" class="wheel" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Koło fortuny">
+      <g id="slices" transform="translate(250,250)"></g>
+    </svg>
 
-      <div class="center" id="centerBtn" title="Zakręć">ZAKRĘĆ</div>
-    </div>
-
-    <div style="display:flex;gap:12px;align-items:center">
-      <button id="spinBtn">Zakręć</button>
-      <div class="result" id="result">Wynik: —</div>
-    </div>
-
+    <div class="center" id="centerBtn" title="Zakręć">ZAKRĘĆ</div>
   </div>
 
-  <!-- ⭐ LEGENDA NAGRÓD ⭐ -->
-  <div class="legend">
-    <h2>Nagrody</h2>
-    1. ..................................................<br>
-    2. ..................................................<br>
-    3. ..................................................<br>
-    4. ..................................................<br>
-    5. ..................................................<br>
-    6. ..................................................<br>
-    7. ..................................................<br>
-    8. ..................................................<br>
+  <div style="display:flex;gap:12px;align-items:center">
+    <button id="spinBtn">Zakręć</button>
+    <div class="result" id="result">Wynik: —</div>
   </div>
+</div>
 
-<script>
-(function(){
-  const SEGMENTS = 8;
-  const VIEW = 500;
-  const R = 230;
-  const sliceAngle = 360/SEGMENTS;
-  const colors = ['#f97316','#fb7185','#60a5fa','#34d399','#f59e0b','#a78bfa','#f43f5e','#10b981'];
+<!-- LEGENDA NAGRÓD -->
+<div class="legend">
+  <h2>Nagrody</h2>
+  1. ..................................................<br>
+  2. ..................................................<br>
+  3. ..................................................<br>
+  4. ..................................................<br>
+  5. ..................................................<br>
+  6. ..................................................<br>
+  7. ..................................................<br>
+  8. ..................................................<br>
+</div>
 
-  const g = document.getElementById('slices');
-  for(let i=0;i<SEGMENTS;i++){
-    const start = (i*sliceAngle - 90) * Math.PI/180;
-    const end   = ((i+1)*sliceAngle - 90) * Math.PI/180;
-    const x1 = Math.cos(start)*R, y1 = Math.sin(start)*R;
-    const x2 = Math.cos(end)*R,   y2 = Math.sin(end)*R;
-    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-    path.setAttribute('d',`M 0 0 L ${x1} ${y1} A ${R} ${R} 0 0 1 ${x2} ${y2} Z`);
-    path.setAttribute('fill', colors[i % colors.length]);
-    path.setAttribute('id','slice-'+(i+1));
-    g.appendChild(path);
-
-    const ang = (i*sliceAngle + sliceAngle/2 - 90) * Math.PI/180;
-    const lx = Math.cos(ang)*(R*0.6), ly = Math.sin(ang)*(R*0.6);
-    const t = document.createElementNS('http://www.w3.org/2000/svg','text');
-    t.setAttribute('x', lx);
-    t.setAttribute('y', ly + 8);
-    t.setAttribute('text-anchor','middle');
-    t.setAttribute('font-size','34');
-    t.setAttribute('font-weight','700');
-    t.setAttribute('fill','#061826');
-    t.setAttribute('class','label');
-    t.textContent = (i+1).toString();
-    g.appendChild(t);
-  }
-
-  const wheel = document.getElementById('wheel');
-  const spinBtn = document.getElementById('spinBtn');
-  const centerBtn = document.getElementById('centerBtn');
-  const resultEl = document.getElementById('result');
-  const arrowEl = document.querySelector('.arrow');
-
-  let spinning = false;
-  let rotation = 0;
-
-  function doSpin(){
-    if(spinning) return;
-    spinning = true;
-    resultEl.textContent = 'Wynik: ...';
-
-    const chosen = Math.floor(Math.random()*SEGMENTS);
-    const full = 3 + Math.floor(Math.random()*4);
-    const jitter = (Math.random()* (sliceAngle - 6)) - (sliceAngle/2 - 3);
-    const target = full*360 + chosen*sliceAngle + jitter;
-
-    rotation = (rotation + target) % 360;
-    wheel.style.transition = `transform 3.8s cubic-bezier(.08,.9,.28,1)`;
-    wheel.style.transform = `rotate(${rotation}deg)`;
-
-    const onEnd = () => {
-      wheel.removeEventListener('transitionend', onEnd);
-      setTimeout(()=>determineWinner(), 30);
-    };
-    wheel.addEventListener('transitionend', onEnd);
-  }
-
-  function determineWinner(){
-    const arrowRect = arrowEl.getBoundingClientRect();
-    const targetY = arrowRect.bottom;
-
-    const labels = Array.from(document.querySelectorAll('#slices text'));
-    let best = null;
-    let bestDist = Infinity;
-
-    labels.forEach(l => {
-      const r = l.getBoundingClientRect();
-      const centerY = r.top + r.height/2;
-      const dist = Math.abs(centerY - targetY);
-      if(dist < bestDist){
-        bestDist = dist;
-        best = l;
-      }
-    });
-
-    if(best){
-      const number = best.textContent.trim();
-      resultEl.textContent = 'Wynik: ' + number;
-      highlightSlice(number);
-    }
-    spinning = false;
-  }
-
-  function highlightSlice(num){
-    for(let i=1;i<=SEGMENTS;i++){
-      const el = document.getElementById('slice-'+i);
-      if(el) el.classList.remove('highlight');
-    }
-    const chosenEl = document.getElementById('slice-'+num);
-    if(chosenEl){
-      chosenEl.classList.add('highlight');
-      setTimeout(()=>{ chosenEl.classList.remove('highlight'); }, 1600);
-    }
-  }
-
-  spinBtn.addEventListener('click', doSpin);
-  centerBtn.addEventListener('click', doSpin);
-
-  window.addEventListener('load', ()=>{ wheel.style.transform = 'rotate(0deg)'; rotation = 0; });
-})();
-</script>
+<script src="kolo_fortuny.js"></script>
 </body>
 </html>
