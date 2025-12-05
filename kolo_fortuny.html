@@ -3,14 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Moje Koło Fortuny</title>
+  <title>Koło Fortuny</title>
   <link rel="stylesheet" href="kolo_fortuny.css">
 </head>
 <body>
 
 <h1>Koło Fortuny</h1>
 
-<div id="wheel-container"></div>
+<div id="wheel-wrapper">
+  <!-- Strzałka -->
+  <svg class="arrow" viewBox="0 0 44 36" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="g" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0" stop-color="#fff199"/>
+        <stop offset="1" stop-color="#ffd24d"/>
+      </linearGradient>
+    </defs>
+    <polygon points="4,4 40,4 22,32" fill="url(#g)" stroke="#b07f06" stroke-width="1"/>
+  </svg>
+
+  <div id="wheel-container"></div>
+</div>
+
 <button id="spin">Zakręć</button>
 <div id="result">Wynik: —</div>
 
