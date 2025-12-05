@@ -1,159 +1,219 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Koło fortuny</title>
-
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Koło fortuny — 8 pól (strzałka na górze wskazuje w dół)</title>
 <style>
-body{
-  font-family:sans-serif;
-  background:#111827;
-  color:white;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  height:100vh;
-  margin:0;
-}
+  :root{--size:420px}
+  body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:#071022;color:#e6eef8;min-height:100vh;margin:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;padding:24px}
+  h1{font-size:20px;margin:0}
+  .wrap{width:var(--size);display:flex;flex-direction:column;align-items:center;gap:12px}
+  .wheel-wrap{position:relative;width:var(--size);height:var(--size)}
+  /* używamy SVG jako strzałki — pewne, zawsze wskazuje w dół */
+  .arrow{
+    position:absolute;
+    left:50%;
+    top:-24px;
+    transform:translateX(-50%);
+    width:44px;
+    height:36px;
+    z-index:30;
+    pointer-events:none;
+  }
+  .wheel{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    box-shadow:0 12px 30px rgba(2,6,23,.6);
+    transform-origin:50% 50%;
+    transition:transform 3.8s cubic-bezier(.08,.9,.28,1);
+    display:block;
+  }
+  .center{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    width:92px;height:92px;border-radius:50%;
+    background:linear-gradient(180deg,#08121a,#021018);
+    display:flex;align-items:center;justify-content:center;font-weight:800;color:#dff3ff;z-index:20;border:6px solid rgba(255,255,255,.04);cursor:pointer;
+  }
+  button{background:#06b6d4;border:none;padding:10px 16px;border-radius:10px;color:#022029;font-weight:800;cursor:pointer}
+  .result{margin-top:6px;font-weight:700}
+  small{opacity:.75}
+  /* highlight */
+  .highlight{
+    filter:brightness(1.15) saturate(1.2);
+    stroke:#ffffff44;
+    stroke-width:2;
+  }
 
-#wrapper{
-  position:relative;
-  width:350px;
-  height:350px;
-  margin-bottom:20px;
-}
-
-/* STRZAŁKA U GÓRY WSKAZUJĄCA W DÓŁ */
-#arrow{
-  position:absolute;
-  left:50%;
-  top:-25px;
-  transform:translateX(-50%);
-  width:0;
-  height:0;
-  border-left:20px solid transparent;
-  border-right:20px solid transparent;
-  border-bottom:35px solid #ffd700;
-  z-index:10;
-}
-
-#wheel{
-  width:100%;
-  height:100%;
-  border-radius:50%;
-  transition:transform 3.5s cubic-bezier(.2,.9,.3,1);
-}
-
-button{
-  padding:10px 20px;
-  border:none;
-  border-radius:8px;
-  background:#22d3ee;
-  color:#022c3a;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-#result{
-  margin-top:15px;
-  font-size:20px;
-  font-weight:bold;
-}
+  @media (max-width:480px){:root{--size:320px}.arrow{top:-20px}}
 </style>
-
 </head>
 <body>
+  <h1>Koło fortuny — 8 pól</h1>
+  <div class="wrap">
+    <div class="wheel-wrap">
+      <!-- STRZAŁKA (SVG) - zawsze wskazuje w dół -->
+      <svg class="arrow" viewBox="0 0 44 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="g" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#fff199"/>
+            <stop offset="1" stop-color="#ffd24d"/>
+          </linearGradient>
+        </defs>
+        <polygon points="4,4 40,4 22,32" fill="url(#g)" stroke="#b07f06" stroke-width="1"/>
+      </svg>
 
-<h2>Koło fortuny – 8 pól</h2>
+      <!-- SVG KOŁA -->
+      <svg id="wheel" class="wheel" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Koło fortuny">
+        <g id="slices" transform="translate(250,250)"></g>
+      </svg>
 
-<div id="wrapper">
-  <div id="arrow"></div>
+      <div class="center" id="centerBtn" title="Zakręć">ZAKRĘĆ</div>
+    </div>
 
-  <!-- SVG KOŁA -->
-  <svg id="wheel" viewBox="0 0 500 500">
-    <g id="segments" transform="translate(250,250)"></g>
-  </svg>
-</div>
-
-<button id="spin">Zakręć</button>
-<div id="result">Wynik: —</div>
-
+    <div style="display:flex;gap:12px;align-items:center">
+      <button id="spinBtn">Zakręć</button>
+      <div class="result" id="result">Wynik: —</div>
+    </div>
+    <small>Strzałka u góry wskazuje w dół — wynik to pole znajdujące się bezpośrednio pod strzałką.</small>
+  </div>
 
 <script>
-/* ---- KONFIG ---- */
-const SEGMENTS = 8;
-const R = 230;
-const sliceAngle = 360 / SEGMENTS;
-const colors = ["#ff6b6b","#4ecdc4","#ffe66d","#1a535c","#f7fff7","#ff9f1c","#2ec4b6","#e71d36"];
+(function(){
+  const SEGMENTS = 8;
+  const VIEW = 500;
+  const R = 230;
+  const sliceAngle = 360/SEGMENTS;
+  const colors = ['#f97316','#fb7185','#60a5fa','#34d399','#f59e0b','#a78bfa','#f43f5e','#10b981'];
 
-/* ---- RYSOWANIE KOŁA ---- */
-const g = document.getElementById("segments");
+  const g = document.getElementById('slices');
+  // narysuj 8 pól i etykiety
+  for(let i=0;i<SEGMENTS;i++){
+    const start = (i*sliceAngle - 90) * Math.PI/180;
+    const end   = ((i+1)*sliceAngle - 90) * Math.PI/180;
+    const x1 = Math.cos(start)*R, y1 = Math.sin(start)*R;
+    const x2 = Math.cos(end)*R,   y2 = Math.sin(end)*R;
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d',`M 0 0 L ${x1} ${y1} A ${R} ${R} 0 0 1 ${x2} ${y2} Z`);
+    path.setAttribute('fill', colors[i % colors.length]);
+    path.setAttribute('id','slice-'+(i+1));
+    g.appendChild(path);
 
-for(let i=0;i<SEGMENTS;i++){
-  const start = (i*sliceAngle - 90) * Math.PI/180;
-  const end   = ((i+1)*sliceAngle - 90) * Math.PI/180;
+    // center angle to place number
+    const ang = (i*sliceAngle + sliceAngle/2 - 90) * Math.PI/180;
+    const lx = Math.cos(ang)*(R*0.6), ly = Math.sin(ang)*(R*0.6);
+    const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x', lx);
+    t.setAttribute('y', ly + 8); // drobne dopasowanie pionowe
+    t.setAttribute('text-anchor','middle');
+    t.setAttribute('font-size','34');
+    t.setAttribute('font-weight','700');
+    t.setAttribute('fill','#061826');
+    t.setAttribute('class','label');
+    t.textContent = (i+1).toString();
+    g.appendChild(t);
+  }
 
-  const x1 = Math.cos(start)*R;
-  const y1 = Math.sin(start)*R;
-  const x2 = Math.cos(end)*R;
-  const y2 = Math.sin(end)*R;
+  const wheel = document.getElementById('wheel');
+  const spinBtn = document.getElementById('spinBtn');
+  const centerBtn = document.getElementById('centerBtn');
+  const resultEl = document.getElementById('result');
+  const arrowEl = document.querySelector('.arrow');
 
-  const p = document.createElementNS("http://www.w3.org/2000/svg","path");
-  p.setAttribute("d",`M0 0 L ${x1} ${y1} A ${R} ${R} 0 0 1 ${x2} ${y2} Z`);
-  p.setAttribute("fill",colors[i]);
-  g.appendChild(p);
+  let spinning = false;
+  let rotation = 0; // aktualna rotacja (deg)
 
-  const a  = (i*sliceAngle + sliceAngle/2 -90) * Math.PI/180;
-  const tx = Math.cos(a)*(R*0.55);
-  const ty = Math.sin(a)*(R*0.55);
+  function doSpin(){
+    if(spinning) return;
+    spinning = true;
+    resultEl.textContent = 'Wynik: ...';
 
-  const t = document.createElementNS("http://www.w3.org/2000/svg","text");
-  t.setAttribute("x",tx);
-  t.setAttribute("y",ty);
-  t.setAttribute("text-anchor","middle");
-  t.setAttribute("font-size","30");
-  t.setAttribute("font-weight","bold");
-  t.setAttribute("fill","#000");
-  t.textContent = i+1;
-  g.appendChild(t);
-}
+    // losowy segment (0..7)
+    const chosen = Math.floor(Math.random()*SEGMENTS);
 
-/* ---- LOSOWANIE I OBRÓT ---- */
-const wheel = document.getElementById("wheel");
-const result = document.getElementById("result");
-const btn = document.getElementById("spin");
+    // losowa liczba pełnych obrotów (dla efektu)
+    const full = 3 + Math.floor(Math.random()*4); // 3..6
+    // niewielki losowy przesuw, żeby nie zawsze stawało idealnie na krawędzi
+    const jitter = (Math.random()* (sliceAngle - 6)) - (sliceAngle/2 - 3);
+    // target: obróć tak, żeby wybrany segment znalazł się pod strzałką
+    // obliczymy na podstawie tego, że przy rotacji 0 segment 1 (index 0) jest pod strzałką
+    // chcemy finalRotate = full*360 + chosen*sliceAngle + jitter
+    const target = full*360 + chosen*sliceAngle + jitter;
 
-let spinning = false;
-let currentRotation = 0;
+    rotation = (rotation + target) % 360;
+    wheel.style.transition = `transform 3.8s cubic-bezier(.08,.9,.28,1)`;
+    wheel.style.transform = `rotate(${rotation}deg)`;
 
-btn.onclick = () => {
-  if(spinning) return;
-  spinning = true;
+    // po zakończeniu animacji sprawdzamy, która etykieta jest najbliżej końcówki strzałki
+    const onEnd = () => {
+      wheel.removeEventListener('transitionend', onEnd);
+      // dajemy małe opóźnienie by DOM się ustabilizował
+      setTimeout(()=>determineWinner(), 30);
+    };
+    wheel.addEventListener('transitionend', onEnd);
+  }
 
-  // losowy segment
-  const chosen = Math.floor(Math.random()*SEGMENTS);
+  function determineWinner(){
+    // punkt docelowy: koniec strzałki (jego współrzędna Y na stronie)
+    // używamy bounding recta strzałki: bottom to jest czubek strzałki skierowanej w dół
+    const arrowRect = arrowEl.getBoundingClientRect();
+    const targetY = arrowRect.bottom; // y pikselowo
 
-  // dodatkowe obroty
-  const spins = 4 + Math.random()*3;
-  const target = spins*360 + chosen*sliceAngle;
+    // pobierz wszystkie teksty (etykiety) i policz dystans ich środka do targetY
+    const labels = Array.from(document.querySelectorAll('#slices text'));
+    let best = null;
+    let bestDist = Infinity;
 
-  currentRotation = (currentRotation + target) % 360;
-  wheel.style.transform = `rotate(${currentRotation}deg)`;
+    labels.forEach(l => {
+      const r = l.getBoundingClientRect();
+      const centerY = r.top + r.height/2;
+      const centerX = r.left + r.width/2;
+      // opcjonalnie można też sprawdzić czy x jest blisko środka strzałki, ale strzałka jest centrowana
+      const dist = Math.abs(centerY - targetY);
+      if(dist < bestDist){
+        bestDist = dist;
+        best = l;
+      }
+    });
 
-  wheel.ontransitionend = () => {
-    // KONWERSJA na numer segmentu pod strzałką:
-    const final = (currentRotation % 360 + 360) % 360;
-    const index = Math.floor((final + sliceAngle/2) / sliceAngle) % SEGMENTS;
-    const number = index + 1;
+    if(best){
+      const number = best.textContent.trim();
+      resultEl.textContent = 'Wynik: ' + number;
 
-    result.textContent = "Wynik: " + number;
+      // podświetl odpowiednie pole
+      highlightSlice(number);
+    } else {
+      resultEl.textContent = 'Wynik: ?';
+    }
     spinning = false;
-  };
-};
-</script>
+  }
 
+  function highlightSlice(num){
+    // usuń poprzednie highlighty
+    for(let i=1;i<=SEGMENTS;i++){
+      const el = document.getElementById('slice-'+i);
+      if(el) el.classList.remove('highlight');
+    }
+    const chosenEl = document.getElementById('slice-'+num);
+    if(chosenEl){
+      chosenEl.classList.add('highlight');
+      // usuń podświetlenie po chwili
+      setTimeout(()=>{ chosenEl.classList.remove('highlight'); }, 1600);
+    }
+  }
+
+  // kliknięcia
+  spinBtn.addEventListener('click', doSpin);
+  centerBtn.addEventListener('click', doSpin);
+
+  // reset transform start
+  window.addEventListener('load', ()=>{ wheel.style.transform = 'rotate(0deg)'; rotation = 0; });
+
+})();
+</script>
 </body>
 </html>
-
