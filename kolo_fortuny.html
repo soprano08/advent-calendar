@@ -23,47 +23,6 @@
     width: 500px;
     height: 500px;
     margin-top: 20px;
-    display: none; /* ukryte dopóki użytkownik nie zaakceptuje */
-  }
-
-  /* Modal */
-  #modal {
-    position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background: rgba(0,0,0,0.85);
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-
-  #modalContent {
-    background: #071022;
-    padding: 20px;
-    border-radius: 12px;
-    max-width: 500px;
-    text-align: center;
-  }
-
-  #modalContent button {
-    margin-top: 20px;
-    padding: 12px 24px;
-    font-size: 16px;
-    cursor: pointer;
-    border: none;
-    border-radius: 8px;
-    background: #06b6d4;
-    color: #071022;
-    font-weight: bold;
-  }
-
-  #modalContent button:disabled {
-    background: #555;
-    cursor: not-allowed;
   }
 
   .legend {
@@ -82,15 +41,6 @@
 
 <h1>Koło Fortuny</h1>
 
-<!-- Modal z regulaminem -->
-<div id="modal">
-  <div id="modalContent">
-    <h2>REGULAMIN</h2>
-    <p>W TYM MOMENCIE PROSZE ODPALIC NAGRYWANIE EKRANU W TELEFONIE. JEZELI NIE DOSTANE FILMU, NAGRODA PRZEPADA.</p>
-    <button id="acceptBtn">AKCEPTUJ</button>
-  </div>
-</div>
-
 <!-- Koło -->
 <iframe id="wheelFrame" src="https://wheelofnames.com/ahq-mpc" frameborder="0" scrolling="no"></iframe>
 
@@ -106,35 +56,6 @@
   7. Sesja klaty, udek, dloni przez trzy dni<br>
   8. Jestem mily 3 dni<br>
 </div>
-
-<script>
-const acceptBtn = document.getElementById("acceptBtn");
-const wheel = document.getElementById("wheelFrame");
-const modal = document.getElementById("modal");
-
-// Sprawdź w localStorage, czy użytkownik już zaakceptował regulamin
-const accepted = localStorage.getItem("accepted");
-
-// Jeśli zaakceptował → blokujemy przycisk, pokazujemy koło i modal
-if(accepted === "true"){
-    acceptBtn.disabled = true;
-    wheel.style.display = "block";  // koło widoczne
-    modal.style.display = "flex";   // modal cały czas widoczny
-} else {
-    // Przy pierwszym wejściu przycisk aktywny
-    acceptBtn.disabled = false;
-}
-
-// Obsługa kliknięcia AKCEPTUJ
-acceptBtn.addEventListener("click", () => {
-    // Zapisz, że użytkownik zaakceptował
-    localStorage.setItem("accepted", "true");
-    // Zablokuj przycisk
-    acceptBtn.disabled = true;
-    // Pokaż koło
-    wheel.style.display = "block";
-});
-</script>
 
 </body>
 </html>
