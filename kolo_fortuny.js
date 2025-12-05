@@ -1,10 +1,9 @@
 (function(){
   const SEGMENTS = 8;
-  const VIEW = 500;
   const R = 230;
-  const sliceAngle = 360/SEGMENTS;
+  const sliceAngle = 360 / SEGMENTS;
   const colors = ['#f97316','#fb7185','#60a5fa','#34d399','#f59e0b','#a78bfa','#f43f5e','#10b981'];
-  const forbiddenIndex = 4; // segment 5 (index 4) nie wylosuje się
+  const forbiddenIndex = 4; // segment 5 (index 4) nigdy nie wylosuje się
 
   const g = document.getElementById('slices');
   for(let i=0;i<SEGMENTS;i++){
@@ -46,13 +45,15 @@
     spinning = true;
     resultEl.textContent = 'Wynik: ...';
 
-    // lista segmentów, z pominięciem zakazanego
+    // Lista dostępnych segmentów bez 5
     const allowed = [0,1,2,3,5,6,7];
     const chosen = allowed[Math.floor(Math.random()*allowed.length)];
 
+    // Liczba pełnych obrotów
     const full = 3 + Math.floor(Math.random()*4);
-    const jitter = (Math.random()* (sliceAngle - 6)) - (sliceAngle/2 - 3);
-    const target = full*360 + chosen*sliceAngle + jitter;
+
+    // Rotacja do środka wybranego segmentu (bez jittera!)
+    const target = full*360 + chosen*sliceAngle + sliceAngle/2;
 
     rotation = (rotation + target) % 360;
     wheel.style.transition = `transform 3.8s cubic-bezier(.08,.9,.28,1)`;
