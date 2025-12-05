@@ -1,31 +1,29 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Koło Fortuny</title>
-  <link rel="stylesheet" href="kolo_fortuny.css">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Koło Fortuny</title>
+<link rel="stylesheet" href="kolo_fortuny.css">
 </head>
 <body>
 
 <h1>Koło Fortuny</h1>
 
-<div id="wheel-wrapper">
-  <!-- Strzałka -->
-  <svg class="arrow" viewBox="0 0 44 36" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="g" x1="0" x2="0" y1="0" y2="1">
-        <stop offset="0" stop-color="#fff199"/>
-        <stop offset="1" stop-color="#ffd24d"/>
-      </linearGradient>
-    </defs>
-    <polygon points="4,4 40,4 22,32" fill="url(#g)" stroke="#b07f06" stroke-width="1"/>
+<div class="wheel-wrapper">
+  <!-- Strzałka wskaźnik -->
+  <svg class="arrow" viewBox="0 0 44 36">
+    <polygon points="4,4 40,4 22,32" fill="#ffd24d" stroke="#b07f06" stroke-width="1"/>
   </svg>
 
-  <div id="wheel-container"></div>
+  <!-- Koło SVG -->
+  <svg id="wheel" viewBox="0 0 500 500">
+    <g id="slices" transform="translate(250,250)"></g>
+  </svg>
+
+  <div class="center-btn" id="spinBtn">ZAKRĘĆ</div>
 </div>
 
-<button id="spin">Zakręć</button>
 <div id="result">Wynik: —</div>
 
 <div class="legend">
@@ -40,8 +38,6 @@
   8. ..................................................<br>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/spin-wheel@5.0.2/dist/spin-wheel-iife.js"></script>
 <script src="kolo_fortuny.js"></script>
-
 </body>
 </html>
