@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Koło Fortuny</title>
 <link rel="stylesheet" href="kolo_fortuny.css">
 </head>
@@ -10,21 +10,9 @@
 
 <h1>Koło Fortuny</h1>
 
-<div class="wheel-wrapper">
-  <!-- Strzałka wskaźnik -->
-  <svg class="arrow" viewBox="0 0 44 36">
-    <polygon points="4,4 40,4 22,32" fill="#ffd24d" stroke="#b07f06" stroke-width="1"/>
-  </svg>
-
-  <!-- Koło SVG -->
-  <svg id="wheel" viewBox="0 0 500 500">
-    <g id="slices" transform="translate(250,250)"></g>
-  </svg>
-
-  <div class="center-btn" id="spinBtn">ZAKRĘĆ</div>
-</div>
-
-<div id="result">Wynik: —</div>
+<!-- Osadzone koło z Wheel of Names -->
+<iframe src="https://wheelofnames.com/pl/ahq-mpc" 
+        width="500" height="500" frameborder="0" scrolling="no"></iframe>
 
 <div class="legend">
   <h2>Nagrody</h2>
@@ -38,6 +26,5 @@
   8. ..................................................<br>
 </div>
 
-<script src="kolo_fortuny.js"></script>
 </body>
 </html>
